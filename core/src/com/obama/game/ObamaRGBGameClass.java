@@ -54,14 +54,14 @@ public class ObamaRGBGameClass extends Game {
 		Gdx.input.setInputProcessor(camController);
 
 		assets = new AssetManager();
-		assets.load("cubo2.g3db", Model.class);
+		assets.load("obamaprisme.g3db", Model.class);
 		loading = true;
 	}
 
 	private void doneLoading() {
-		Model ship = assets.get("cubo2.g3db", Model.class);
-		for (float x = -10f; x <= 10f; x += 3f) {
-			for (float z = -10f; z <= 10f; z += 3f) {
+		Model ship = assets.get("obamaprisme.g3db", Model.class);
+		for (float x = -500f; x <= 500f; x += 3f) {
+			for (float z = -500f; z <= 500f; z += 3f) {
 				ModelInstance shipInstance = new ModelInstance(ship);
 				shipInstance.transform.setToTranslation(x, 0, z);
 				instances.add(shipInstance);
@@ -75,6 +75,8 @@ public class ObamaRGBGameClass extends Game {
 		if (loading && assets.update())
 			doneLoading();
 		camController.update();
+
+
 
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
