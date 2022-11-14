@@ -54,14 +54,14 @@ public class ObamaRGBGameClass extends Game {
 		Gdx.input.setInputProcessor(camController);
 
 		assets = new AssetManager();
-		assets.load("obamaprisme.g3db", Model.class);
+		assets.load("playerModel/obamaPrisme/obama_prisme.g3db", Model.class);
 		loading = true;
 	}
 
 	private void doneLoading() {
-		Model ship = assets.get("obamaprisme.g3db", Model.class);
-		for (float x = -500f; x <= 500f; x += 3f) {
-			for (float z = -500f; z <= 500f; z += 3f) {
+		Model ship = assets.get("playerModel/obamaPrisme/obama_prisme.g3db", Model.class);
+		for (float x = -30f; x <= 30f; x += 3f) {
+			for (float z = -30f; z <= 30f; z += 3f) {
 				ModelInstance shipInstance = new ModelInstance(ship);
 				shipInstance.transform.setToTranslation(x, 0, z);
 				instances.add(shipInstance);
@@ -80,6 +80,7 @@ public class ObamaRGBGameClass extends Game {
 
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+		//Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT | (Gdx.graphics.getBufferFormat().coverageSampling?GL20.GL_COVERAGE_BUFFER_BIT_NV:0));
 
 		modelBatch.begin(cam);
 		modelBatch.render(instances, environment);
@@ -87,6 +88,7 @@ public class ObamaRGBGameClass extends Game {
 		batch.begin();
 		font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 20, 20);
 		batch.end();
+
 	}
 
 	@Override
