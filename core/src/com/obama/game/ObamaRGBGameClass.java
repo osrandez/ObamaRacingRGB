@@ -65,8 +65,8 @@ public class ObamaRGBGameClass extends Game {
 		Model cuboy = assets.get("playerModel/marianoCuboid/mariano_cuboid.g3db", Model.class);
 		Model sanchez=assets.get("playerModel/poliedroSanchez/poliedro_sanchez.g3db", Model.class);
 		ModelInstance shipInstance=null;
-		for (int x = -30; x <= 30; x += 3f) {
-			for (int z = -30; z <= 30; z += 3f) {
+		for (int x = -90; x <= 90; x += 3f) {
+			for (int z = -90; z <= 90; z += 3f) {
 				switch(Math.abs((x+z)%9)) {
 					case 0 -> shipInstance = new ModelInstance(obama);
 					case 3 -> shipInstance = new ModelInstance(cuboy);
@@ -79,6 +79,8 @@ public class ObamaRGBGameClass extends Game {
 		loading = false;
 	}
 
+
+	float aux = 0;
 	@Override
 	public void render () {
 		if (loading && assets.update())
@@ -99,9 +101,17 @@ public class ObamaRGBGameClass extends Game {
 		font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 20, 20);
 		batch.end();
 
+
+		float wave;
+		float offset = 0;
 		for (ModelInstance mi : instances) {
 			mi.transform.rotate(new Vector3(0,1,0), delta*100);
+			Vector3 xd = mi.transform.getTranslation(new Vector3(0,0,0));
+			wave = (float) (2*Math.sin((offset+=5)+aux/0.3));
+			mi.transform.setTranslation(xd.x,wave,xd.z);
+
 		}
+		aux+=delta;
 	}
 
 	@Override
