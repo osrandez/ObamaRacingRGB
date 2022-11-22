@@ -29,7 +29,7 @@ public class ObamaRGBGameClass extends Game {
 	public ModelBatch modelBatch;
 	public SpriteBatch batch;
 	public AssetManager assets;
-	public Array<ModelInstance> instances = new Array<ModelInstance>();
+	public Array<ModelInstance> instances = new Array<>();
 	public Environment environment;
 	public boolean loading;
 	BitmapFont font;
@@ -55,14 +55,23 @@ public class ObamaRGBGameClass extends Game {
 
 		assets = new AssetManager();
 		assets.load("playerModel/obamaPrisme/obama_prisme.g3db", Model.class);
+		assets.load("playerModel/poliedroSanchez/poliedro_sanchez.g3db", Model.class);
+		assets.load("playerModel/marianoCuboid/mariano_cuboid.g3db", Model.class);
 		loading = true;
 	}
 
 	private void doneLoading() {
-		Model ship = assets.get("playerModel/obamaPrisme/obama_prisme.g3db", Model.class);
-		for (float x = -30f; x <= 30f; x += 3f) {
-			for (float z = -30f; z <= 30f; z += 3f) {
-				ModelInstance shipInstance = new ModelInstance(ship);
+		Model obama = assets.get("playerModel/obamaPrisme/obama_prisme.g3db", Model.class);
+		Model cuboy = assets.get("playerModel/marianoCuboid/mariano_cuboid.g3db", Model.class);
+		Model sanchez=assets.get("playerModel/poliedroSanchez/poliedro_sanchez.g3db", Model.class);
+		ModelInstance shipInstance=null;
+		for (int x = -30; x <= 30; x += 3f) {
+			for (int z = -30; z <= 30; z += 3f) {
+				switch(Math.abs((x+z)%9)) {
+					case 0 -> shipInstance = new ModelInstance(obama);
+					case 3 -> shipInstance = new ModelInstance(cuboy);
+					case 6 -> shipInstance = new ModelInstance(sanchez);
+				}
 				shipInstance.transform.setToTranslation(x, 0, z);
 				instances.add(shipInstance);
 			}
@@ -74,6 +83,7 @@ public class ObamaRGBGameClass extends Game {
 	public void render () {
 		if (loading && assets.update())
 			doneLoading();
+		final float delta = Math.min(1f/30f, Gdx.graphics.getDeltaTime());
 		camController.update();
 
 
@@ -89,13 +99,18 @@ public class ObamaRGBGameClass extends Game {
 		font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 20, 20);
 		batch.end();
 
+		for (ModelInstance mi : instances) {
+			mi.transform.rotate(new Vector3(0,1,0), delta*100);
+		}
 	}
 
 	@Override
 	public void dispose () {
+		batch.dispose();
 		modelBatch.dispose();
 		instances.clear();
 		assets.dispose();
+		font.dispose();
 	}
 
 	@Override
