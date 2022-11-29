@@ -65,8 +65,8 @@ public class ObamaRGBGameClass extends Game {
 		Model cuboy = assets.get("playerModel/marianoCuboid/mariano_cuboid.g3db", Model.class);
 		Model sanchez=assets.get("playerModel/poliedroSanchez/poliedro_sanchez.g3db", Model.class);
 		ModelInstance shipInstance=null;
-		for (int x = -90; x <= 90; x += 3f) {
-			for (int z = -90; z <= 90; z += 3f) {
+		for (int x = -600; x <= 600; x += 3f) {
+			for (int z = -600; z <= 600; z += 3f) {
 				switch(Math.abs((x+z)%9)) {
 					case 0 -> shipInstance = new ModelInstance(obama);
 					case 3 -> shipInstance = new ModelInstance(cuboy);
@@ -88,6 +88,8 @@ public class ObamaRGBGameClass extends Game {
 		final float delta = Math.min(1f/30f, Gdx.graphics.getDeltaTime());
 		camController.update();
 
+		visCount = 0;
+
 
 
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -95,10 +97,17 @@ public class ObamaRGBGameClass extends Game {
 		//Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT | (Gdx.graphics.getBufferFormat().coverageSampling?GL20.GL_COVERAGE_BUFFER_BIT_NV:0));
 
 		modelBatch.begin(cam);
-		modelBatch.render(instances, environment);
+		//modelBatch.render(instances, environment);
+		for(ModelInstance xd : instances){
+			if(isVisible(cam, xd)){
+				modelBatch.render(xd, environment);
+				visCount++;
+			}
+		}
 		modelBatch.end();
 		batch.begin();
 		font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 20, 20);
+		font.draw(batch, "Objects drawn: " + visCount, 100, 20);
 		batch.end();
 
 
@@ -112,6 +121,13 @@ public class ObamaRGBGameClass extends Game {
 
 		}
 		aux+=delta;
+	}
+
+	private int visCount;
+	private Vector3 position = new Vector3();
+	protected boolean isVisible(final Camera cam, final ModelInstance instance) {
+		instance.transform.getTranslation(position);
+		return cam.frustum.pointInFrustum(position);
 	}
 
 	@Override
