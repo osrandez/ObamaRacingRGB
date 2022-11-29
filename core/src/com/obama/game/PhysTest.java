@@ -6,6 +6,8 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
@@ -23,6 +25,7 @@ import com.badlogic.gdx.utils.Disposable;
 public class PhysTest implements ApplicationListener {
     static class Objeto extends ModelInstance implements Disposable{
         btCollisionObject btColObj;
+
         boolean moving;
         static class Constructor implements Disposable{
             private final Model model;
@@ -81,6 +84,7 @@ public class PhysTest implements ApplicationListener {
     btCollisionConfiguration colConfig;
     btCollisionDispatcher dispatcher;
 
+    /*
     private boolean collisionCheck(btCollisionObject c1, btCollisionObject c2) {
         CollisionObjectWrapper co0 = new CollisionObjectWrapper(c1);
         CollisionObjectWrapper co1 = new CollisionObjectWrapper(c2);
@@ -105,10 +109,35 @@ public class PhysTest implements ApplicationListener {
 
         return r;
     }
+    */
+    BitmapFont font;
+    SpriteBatch batch;
+
+    btBroadphaseInterface broadphase;
+    btCollisionWorld collisionWorld;
+
+    class MyContactListener extends ContactListener {
+        @Override
+        public boolean onContactAdded (int userValue0, int partId0, int index0, int userValue1, int partId1, int index1) {
+            if (userValue1 == 0)
+                instances.get(userValue0).moving = false;
+            else if (userValue0 == 0)
+                instances.get(userValue1).moving = false;
+            return true;
+        }
+    }
+
+    MyContactListener contactListener;
+
+    final static short GROUND_FLAG = 1<<8;
+    final static short OBJECT_FLAG = 1<<9;
+    final static short ALL_FLAG = -1;
 
     @Override
     public void create() {
         Bullet.init();
+        font = new BitmapFont();
+        batch = new SpriteBatch();
         modelBatch = new ModelBatch();
 
         environment = new Environment();
@@ -160,10 +189,16 @@ public class PhysTest implements ApplicationListener {
         constructors.put("obama", new Objeto.Constructor(am.get("playerModel/obamaPrisme/obama_prisme.g3db", Model.class), new btSphereShape(0.5f)));
 
         instances = new Array<>();
-        instances.add(constructors.get("ground").construct());
+        Objeto o = constructors.get("ground").construct();
+        instances.add(o);
 
+        broadphase = new btDbvtBroadphase();
         colConfig = new btDefaultCollisionConfiguration();
         dispatcher = new btCollisionDispatcher(colConfig);
+
+        collisionWorld = new btCollisionWorld(dispatcher, broadphase, colConfig);
+        contactListener = new MyContactListener();
+        collisionWorld.addCollisionObject(o.btColObj, GROUND_FLAG, ALL_FLAG);
     }
 
     @Override
@@ -171,7 +206,7 @@ public class PhysTest implements ApplicationListener {
 
     }
 
-    int spawnTimer=120;
+    float spawnTimer=1;
 
     @Override
     public void render() {
@@ -182,25 +217,26 @@ public class PhysTest implements ApplicationListener {
         Gdx.gl.glClearColor(0.3f, 0.3f, 0.3f, 1.f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
-
-
         for (Objeto xd : instances) {
             if (xd.moving) {
-                xd.transform.trn(0,-delta,0);
+                xd.transform.trn(0,-delta*2,0);
                 xd.btColObj.setWorldTransform(xd.transform);
-                if (collisionCheck(xd.btColObj, instances.get(0).btColObj)){
-                    xd.moving=false;
-                }
             }
         }
+
+        collisionWorld.performDiscreteCollisionDetection();
 
         modelBatch.begin(cam);
         modelBatch.render(instances, environment);
         modelBatch.end();
 
-        if ((spawnTimer-=1) < 1) {
+        batch.begin();
+        font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 20, 20);
+        batch.end();
+
+        if ((spawnTimer-=delta) < 1) {
             spawn();
-            spawnTimer = 180;
+            spawnTimer = 1.3f;
         }
     }
 
@@ -210,7 +246,10 @@ public class PhysTest implements ApplicationListener {
         obj.transform.setFromEulerAngles(MathUtils.random(360f), MathUtils.random(360f), MathUtils.random(360f));
         obj.transform.trn(MathUtils.random(-2.5f, 2.5f), 9f, MathUtils.random(-2.5f, 2.5f));
         obj.btColObj.setWorldTransform(obj.transform);
+        obj.btColObj.setUserValue(instances.size);
+        obj.btColObj.setCollisionFlags(obj.btColObj.getCollisionFlags() | btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK);
         instances.add(obj);
+        collisionWorld.addCollisionObject(obj.btColObj, OBJECT_FLAG, GROUND_FLAG);
     }
 
     @Override
@@ -233,8 +272,16 @@ public class PhysTest implements ApplicationListener {
 
         dispatcher.dispose();
         colConfig.dispose();
+        contactListener.dispose();
+        collisionWorld.dispose();
+        broadphase.dispose();
 
         modelBatch.dispose();
         model.dispose();
+
+        batch.dispose();
+        font.dispose();
     }
 }
+
+
