@@ -54,17 +54,21 @@ public class ObamaRGBGameClass extends Game {
 		Model obama = assets.get("playerModel/obamaPrisme/obama_prisme.g3db", Model.class);
 		Model cuboy = assets.get("playerModel/marianoCuboid/mariano_cuboid.g3db", Model.class);
 		Model sanchez=assets.get("playerModel/poliedroSanchez/poliedro_sanchez.g3db", Model.class);
-		ModelInstance shipInstance=null;
+		ModelInstance shipInstance;
 		for (int x = -90; x <= 90; x += 3f) {
 			for (int z = -90; z <= 90; z += 3f) {
 				switch(Math.abs((x+z)%9)) {
-					case 0 -> shipInstance = new ModelInstance(obama);
+					default -> shipInstance = new ModelInstance(obama);
 					case 3 -> shipInstance = new ModelInstance(cuboy);
 					case 6 -> shipInstance = new ModelInstance(sanchez);
 				}
 				shipInstance.transform.setToTranslation(x, 0, z);
 				instances.add(shipInstance);
 			}
+		}
+		float offset=0;
+		for (ModelInstance mi : instances) {
+			mi.transform.rotate(new Vector3(0,1,0), offset+=37);
 		}
 		loading = false;
 	}
