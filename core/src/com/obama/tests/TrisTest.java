@@ -148,13 +148,14 @@ public class TrisTest implements ApplicationListener {
         object = constructors.get("cuboy").construct();
         object.transform.trn(0, 9f, 0);
         object.body.proceedToTransform(object.transform);
+
         object.body.setUserValue(instances.size);
-        object.body.setCollisionFlags(object.body.getCollisionFlags() | btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK);
+        object.body.setCollisionFlags(object.body.getCollisionFlags() | btCollisionObject.CollisionFlags.CF_CHARACTER_OBJECT);
         instances.add(object);
         dynamicsWorld.addRigidBody(object.body);
         object.body.setContactCallbackFlag(OBJECT_FLAG);
         object.body.setContactCallbackFilter(GROUND_FLAG);
-        object.body.setActivationState(Collision.DISABLE_DEACTIVATION);
+
 
     }
 
@@ -239,6 +240,7 @@ public class TrisTest implements ApplicationListener {
 
     }
 
+    float speed = 0;
     // Mostrar por pantalla :)
     @Override
     public void render() {
@@ -253,25 +255,19 @@ public class TrisTest implements ApplicationListener {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
         Player pl = instances.get(1);
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            var accel = new Vector3(0, -9.8f,0);
             Quaternion qt = new Quaternion();
-            float angle = pl.body.getWorldTransform().getRotation(qt, true).getYaw();
-
-            accel.x = (float) Math.sin(angle)*10;
-            accel.z = (float) Math.cos(angle)*10;
-
-            pl.body.setGravity(accel);
-        } else {
-            pl.body.setGravity(new Vector3(0,-9.8f,0));
+            float angle = pl.transform.getRotation(qt, true).getYaw();
+            pl.body.applyCentralImpulse(new Vector3((float)Math.sin(angle)*delta*2,0,(float) Math.cos(angle)*delta*2));
         }
 
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
+            pl.body.applyCentralImpulse(new Vector3(0,10,0));
+
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT))
-            pl.body.setInterpolationAngularVelocity(new Vector3(0,1,0));
+            pl.transform.rotate(new Vector3(0,1,0),delta*10);
 
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT))
-            pl.body.setInterpolationAngularVelocity(new Vector3(0,-1,0));
-
-        pl.body.integrateVelocities(delta);
+            pl.transform.rotate(new Vector3(0,1,0),-delta*10);
 
         // Updateamos colisiones
         // Esta verga sincroniza las transform gracias al MotionState
