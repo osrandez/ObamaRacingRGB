@@ -1,4 +1,4 @@
-package com.obama.game;
+package com.obama.noSeUsarLaLibreria;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;

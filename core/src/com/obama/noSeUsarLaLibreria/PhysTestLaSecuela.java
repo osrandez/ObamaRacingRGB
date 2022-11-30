@@ -1,4 +1,4 @@
-package com.obama.game;
+package com.obama.noSeUsarLaLibreria;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -197,7 +197,7 @@ public class PhysTestLaSecuela implements ApplicationListener {
     private void loadModels() {
         AssetManager am = new AssetManager();
         am.load("playerModel/obamaPrisme/obama_prisme.g3db", Model.class);
-        am.load("playerModel/marianoCuboid/mariano_cuboid.g3db", Model.class);
+        am.load("playerModel/marianoCuboy/mariano_cuboid.g3db", Model.class);
         am.load("playerModel/poliedroSanchez/poliedro_sanchez.g3db", Model.class);
         while (true)
             if (am.update()) break;// esperar carga
