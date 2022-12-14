@@ -24,9 +24,6 @@ import com.badlogic.gdx.utils.Disposable;
 
 public class TestSerio1 extends Game {
     Array<Disposable> disposables = new Array<>();
-    Array<Player> players = new Array<>();
-    Array<DriveableObject> driveables = new Array<>();
-    //Array<WallObject> walls = new Array<>();
 
     PerspectiveCamera cam;
     CameraInputController camController;
@@ -63,8 +60,8 @@ public class TestSerio1 extends Game {
 
         while (!am.update()) {} // xd
 
-        Player sanche = new Player(am.<Model>get("playerModel/poliedroSanchez/poliedro_sanchez.g3db"));
-        players.add(sanche);
+        //PlayerEntity sanche = new PlayerEntity(am.<Model>get("playerModel/poliedroSanchez/poliedro_sanchez.g3db"));
+        //players.add(sanche);
 
         ModelBuilder mb = new ModelBuilder();
         mb.begin();
@@ -84,12 +81,12 @@ public class TestSerio1 extends Game {
                         new btBoxShape(new Vector3(200f, 0.1f, 200f)),
                         "ground"
                 );
-        driveables.add(suelo);
+        floorConstruction.add(suelo);
+        */
 
 
-
-        disposables.addAll(players);
-        disposables.addAll(driveables);
+        // disposables.addAll(players);
+        // disposables.addAll(floorConstruction);
     }
 
 
@@ -104,8 +101,8 @@ public class TestSerio1 extends Game {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
         modelBatch.begin(cam);
-        modelBatch.render(driveables, environment);
-        modelBatch.render(players, environment);
+        //modelBatch.render(floorConstruction, environment);
+        //modelBatch.render(players, environment);
         modelBatch.end();
     }
 
@@ -139,16 +136,11 @@ class Entity extends ModelInstance implements Disposable {
 abstract class HitboxEntity extends Entity{
     Array<Disposable> disposables;
     btCollisionObject hitbox;
-    public Entity(Model model) {
+    public HitboxEntity(Model model) {
         super(model);
     }
-    public Entity(Model model, String... rootNodeIds) {
+    public HitboxEntity(Model model, String... rootNodeIds) {
         super(model, rootNodeIds);
-    }
-
-    public void dispose() {
-        for (Disposable d : disposables)
-            d.dispose();
     }
 }
 
