@@ -77,8 +77,9 @@ public class TestSerio1 extends Game {
         Model model = mb.end();
         disposables.add(model);
 
-        DriveableObject suelo =
-                new DriveableObject(
+        /*
+        FloorEntity suelo =
+                new FloorEntity(
                         model,
                         new btBoxShape(new Vector3(200f, 0.1f, 200f)),
                         "ground"
@@ -117,7 +118,6 @@ public class TestSerio1 extends Game {
 
 class Entity extends ModelInstance implements Disposable {
     Array<Disposable> disposables;
-    btCollisionObject hitbox;
     public Entity(Model model) {
         super(model);
         disposables = new Array<>();
@@ -134,94 +134,26 @@ class Entity extends ModelInstance implements Disposable {
             d.dispose();
     }
 }
-class Player extends Entity {
-    private static final float hbSize = 0.5f;
-    Vector3 localInertia = new Vector3();
-    Vector3 direction = new Vector3();
-    boolean onGround;
 
-    public Player(Model model) {
+
+abstract class HitboxEntity extends Entity{
+    Array<Disposable> disposables;
+    btCollisionObject hitbox;
+    public Entity(Model model) {
         super(model);
-        hitbox = new btCollisionObject();
-        btCollisionShape shape = new btSphereShape(hbSize);
-        hitbox.setCollisionShape(shape);
-        disposables.add(hitbox);
-        disposables.add(shape);
     }
-    public Player(Model model, String... rootNodeIds) {
+    public Entity(Model model, String... rootNodeIds) {
         super(model, rootNodeIds);
-        hitbox = new btCollisionObject();
-        btCollisionShape shape = new btSphereShape(hbSize);
-        hitbox.setCollisionShape(shape);
-        disposables.add(hitbox);
-        disposables.add(shape);
-    }
-    private Vector3 computeTranslations(Vector3 d,Vector3 inertia, final float delta) {
-        Vector3 aux = d.cpy();
-        Vector3 translation = new Vector3();
-        translation.x = d.x*inertia.x*delta;
-        translation.y = d.y*inertia.x*delta;
-        translation.z = d.z*inertia.x*delta;
-
-        aux = d.cpy().rotate(90, 0,1,0);
-        translation.x = d.x*inertia.x*delta;
-        translation.y = d.y*inertia.x*delta;
-        translation.z = d.z*inertia.x*delta;
-        return d;
     }
 
-    public void applyPhysics(final float delta) {
-        Matrix4 newPos = hitbox.getWorldTransform();
-
-        newPos.translate(computeTranslations(direction, localInertia, delta));
-        Vector3 sideVec = direction.cpy().rotate(new Vector3(0,1,0), 90);
-        newPos.translate(computeTranslations(sideVec, localInertia, delta));
-
-        newPos.setToLookAt(direction, new Vector3());
-        sync();
-    }
-
-    public void sync() {
-        transform.set(hitbox.getWorldTransform());
+    public void dispose() {
+        for (Disposable d : disposables)
+            d.dispose();
     }
 }
 
-class mapEntity extends Entity {
-    public mapEntity(Model model) {
+class BolaEntity extends HitboxEntity{
+    public BolaEntity(Model model){
         super(model);
     }
-    public mapEntity(Model model, String... rootNodeIds) {
-        super(model, rootNodeIds);
-    }
 }
-
-class DriveableObject extends mapEntity {
-    public float friction;
-    public float maxSpeed;
-    public DriveableObject(Model model, btCollisionShape sh) {
-        super(model);
-        hitbox = new btCollisionObject();
-        hitbox.setCollisionShape(sh);
-        disposables.add(hitbox);
-        disposables.add(sh);
-    }
-
-    public DriveableObject(Model model, btCollisionShape sh, String... rootNodeIds) {
-        super(model, rootNodeIds);
-        hitbox = new btCollisionObject();
-        hitbox.setCollisionShape(sh);
-        disposables.add(hitbox);
-        disposables.add(sh);
-    }
-}
-/*todo HACER ESTA BREA
-class WallObject extends mapEntity {
-    public WallObject(Model model) {
-        super(model);
-    }
-
-    public WallObject(Model model, String... rootNodeIds) {
-        super(model, rootNodeIds);
-    }
-}
-*/

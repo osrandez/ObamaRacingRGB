@@ -1,0 +1,12 @@
+# OUTPUT FILES
+core/build
+core/build/*
+
+.gradle
+.gradle/*
+
+
+
+# IDE files
+.idea
+.idea/*
