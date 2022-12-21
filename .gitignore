@@ -1,6 +1,7 @@
 # OUTPUT FILES
-core/build
-core/build/*
+/core/build
+/core/build/
+/core/build/*
 
 .gradle
 .gradle/*
@@ -10,3 +11,4 @@ core/build/*
 # IDE files
 .idea
 .idea/*
+
