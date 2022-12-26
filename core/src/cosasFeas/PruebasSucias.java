@@ -29,6 +29,27 @@ import com.badlogic.gdx.utils.Disposable;
 
 // Ensuciame esta tenemos juego
 public class PruebasSucias extends Game {
+    Pito pito;
+    boolean ctrl=false;
+    static class Pito extends ModelInstance implements Disposable {
+        public final btGhostObject body;
+        public Pito(Model m, String n, btCollisionShape shape) {
+            super(m,n);
+            body= new btGhostObject();
+            body.setCollisionFlags(body.getCollisionFlags() | btCollisionObject.CollisionFlags.CF_NO_CONTACT_RESPONSE);
+            body.setCollisionShape(shape);
+            body.setWorldTransform(new Matrix4().setToTranslation(10,2,10));
+            transform.set(body.getWorldTransform());
+            body.setContactCallbackFlag(GHOST_FLAG);
+            body.setContactCallbackFilter(OBJECT_FLAG);
+        }
+
+        @Override
+        public void dispose() {
+            model.dispose();
+            body.dispose();
+        }
+    }
     static class Player extends ModelInstance implements Disposable {
         public final btRigidBody body;
         public final MotionState motionState; // Sincronisar matrices4
@@ -101,12 +122,13 @@ public class PruebasSucias extends Game {
         @Override
         public boolean onContactAdded (int userValue0, int partId0, int index0, boolean match0,
                                        int userValue1, int partId1, int index1, boolean match1) {
-            /*
+
             if (match0)
                 ((ColorAttribute)instances.get(userValue0).materials.get(0).get(ColorAttribute.Diffuse)).color.set(Color.WHITE);
             if (match1)
                 ((ColorAttribute)instances.get(userValue1).materials.get(0).get(ColorAttribute.Diffuse)).color.set(Color.WHITE);
-            */
+
+            ctrl=true;
             return true;
         }
     } // Sobreescribir que pasa cuando hay contacto
@@ -140,9 +162,11 @@ public class PruebasSucias extends Game {
 
     float spawnTimer=1;
 
+    final static short GHOST_FLAG = 1<<7; // Fantasmos
     final static short GROUND_FLAG = 1<<8; // Flag suelo (inmovible)
     final static short OBJECT_FLAG = 1<<9; // Flag item (tiene fisicotas guays)
     final static short ALL_FLAG = -1; // Colision con todos los items
+
 
     @Override
     public void create() {
@@ -164,6 +188,8 @@ public class PruebasSucias extends Game {
         // Podemos hacer body.state = btCol···.Active; // Pero perdemos rendimiento
         // De esta forma lo dejamos como "Activo" para que los objetos que colisionen con el
         // no entren en estado "awaiting_deactivation" y al final "sleeping_island" junto al suelo
+
+        pito= new Pito(model, "obama", new btSphereShape(0.5f));
 
         spawn();
         spawn();
@@ -187,6 +213,7 @@ public class PruebasSucias extends Game {
         cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         cam.position.set(3f, 7f, 10f);
         cam.lookAt(0, 4f, 0);
+        cam.far = 999999999f;
         cam.update();
 
         camController = new CameraInputController(cam);
@@ -198,7 +225,7 @@ public class PruebasSucias extends Game {
         broadPhase = new btDbvtBroadphase(); // Para aproximar la verga de colisiones sin cagar mucho rendimiento
         constraintSolver = new btSequentialImpulseConstraintSolver(); // tengo que mirar esto de nuevo
         dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, broadPhase, constraintSolver, colConfig); // como el collisionWorld pero gucci
-        dynamicsWorld.setGravity(new Vector3(0, -10f, 0));
+        dynamicsWorld.setGravity(new Vector3(0, -30f, 0));
         contactListener = new CollisionListener(); // Sobreescribir el ContactListener por defecto
 
         instances = new Array<>();
@@ -220,7 +247,7 @@ public class PruebasSucias extends Game {
         mb.node("sanchez", am.get("playerModel/poliedroSanchez/poliedro_sanchez.g3db", Model.class));
         mb.node().id = "ground";
         mb.part("ground", GL20.GL_TRIANGLES, Usage.Position | Usage.Normal, new Material(ColorAttribute.createDiffuse(Color.RED)))
-                .box(20f, 0.2f, 20f);
+                .box(400f, 0.2f, 400f);
         mb.node().id = "sphere";
         mb.part("sphere", GL20.GL_TRIANGLES, Usage.Position | Usage.Normal, new Material(ColorAttribute.createDiffuse(Color.GREEN)))
                 .sphere(1f, 1f, 1f, 10, 10);
@@ -242,8 +269,8 @@ public class PruebasSucias extends Game {
     // Carga la factoria de instancias
     private void loadConstructors() {
         constructors = new ArrayMap<>(String.class, Player.Constructor.class);
-        constructors.put("ground", new Player.Constructor(model, "ground", new btBoxShape(new Vector3(10f, 0.1f, 10f)), 0f));
-        constructors.put("sphere", new Player.Constructor(model, "sanchez", new btSphereShape(0.5f), 1f));
+        constructors.put("ground", new Player.Constructor(model, "ground", new btBoxShape(new Vector3(200f, 0.1f, 200f)), 0f));
+        constructors.put("sphere", new Player.Constructor(model, "cuboy", new btSphereShape(0.5f), 1f));
         constructors.put("box", new Player.Constructor(model, "box", new btBoxShape(new Vector3(0.5f, 0.5f, 0.5f)), 1f));
         constructors.put("cone", new Player.Constructor(model, "cone", new btConeShape(0.5f, 2f), 1f));
         constructors.put("capsule", new Player.Constructor(model, "capsule", new btCapsuleShape(.5f, 1f), 1f));
@@ -263,6 +290,9 @@ public class PruebasSucias extends Game {
         // Tiempo entre frames, minimo por si hay penco lag a 2 fps para que funke el bullet
         final float delta = Math.min(1/30f, Gdx.graphics.getDeltaTime());
 
+        if (ctrl)
+            dispose();
+
         // Movemos cam
         camController.update();
 
@@ -273,10 +303,25 @@ public class PruebasSucias extends Game {
         // Updatear aki fisicas
         Player pl = instances.get(1);
         Vector3 impulse = new Vector3();
-        impulse.mulAdd(cam.direction.cpy().nor(),delta*pl.accelFactor());
+        impulse.mulAdd(new Vector3(1,0,0).nor(),delta*pl.accelFactor());
 
-        if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.UP))
             pl.body.applyCentralImpulse(impulse);
+        if (Gdx.input.isKeyPressed(Input.Keys.DOWN))
+            pl.body.applyCentralImpulse(impulse.cpy().rotate(new Vector3(0,1,0),180));
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT))
+            pl.body.applyCentralImpulse(impulse.cpy().rotate(new Vector3(0,1,0),90));
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT))
+            pl.body.applyCentralImpulse(impulse.cpy().rotate(new Vector3(0,1,0),270));
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
+            pl.body.applyCentralImpulse(new Vector3(0,10,0));
+        if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
+            pl.body.setWorldTransform(pl.body.getWorldTransform().setToTranslation(0,5,0));
+            pl.body.setLinearVelocity(new Vector3(0,0,0));
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
+            Vector3 xd = pl.body.getLinearVelocity().cpy();
+            pl.body.applyCentralImpulse(new Vector3().mulAdd(xd,-delta*2.5f));
         }
 
 
@@ -289,6 +334,7 @@ public class PruebasSucias extends Game {
 
         modelBatch.begin(cam);
         modelBatch.render(instances, environment);
+        modelBatch.render(pito, environment);
         modelBatch.end();
 
         batch.begin();
@@ -308,7 +354,8 @@ public class PruebasSucias extends Game {
         instances.add(obj);
         dynamicsWorld.addRigidBody(obj.body);
         obj.body.setContactCallbackFlag(OBJECT_FLAG);
-        obj.body.setContactCallbackFilter(GROUND_FLAG);
+        obj.body.setContactCallbackFilter(OBJECT_FLAG);
+        obj.body.setFriction(20);
     }
 
     @Override
