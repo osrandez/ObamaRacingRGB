@@ -1,13 +1,11 @@
-package cosasFeas;
+package tests;
 
-import com.badlogic.gdx.Game;
+import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
-import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.*;
@@ -15,6 +13,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
+import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
@@ -26,37 +25,14 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.Disposable;
 
-
-// Ensuciame esta tenemos juego
-public class PruebasSucias extends Game {
-    Pito pito;
-    boolean ctrl=false;
-    static class Pito extends ModelInstance implements Disposable {
-        public final btGhostObject body;
-        public Pito(Model m, String n, btCollisionShape shape) {
-            super(m,n);
-            body= new btGhostObject();
-            body.setCollisionFlags(body.getCollisionFlags() | btCollisionObject.CollisionFlags.CF_NO_CONTACT_RESPONSE);
-            body.setCollisionShape(shape);
-            body.setWorldTransform(new Matrix4().setToTranslation(10,2,10));
-            transform.set(body.getWorldTransform());
-            body.setContactCallbackFlag(GHOST_FLAG);
-            body.setContactCallbackFilter(OBJECT_FLAG);
-        }
-
-        @Override
-        public void dispose() {
-            model.dispose();
-            body.dispose();
-        }
-    }
+public class PhysTestLaSecuela implements ApplicationListener {
     static class Player extends ModelInstance implements Disposable {
         public final btRigidBody body;
         public final MotionState motionState; // Sincronisar matrices4
         public Player(Model model, btRigidBody.btRigidBodyConstructionInfo info) {
             super(model);
             motionState = new MotionState();
-            motionState.transform = this.transform;
+            motionState.transform = transform;
             this.body = new btRigidBody(info);
             body.setMotionState(motionState);
         } // Para modelos unicos
@@ -67,10 +43,6 @@ public class PruebasSucias extends Game {
             this.body = new btRigidBody(info);
             body.setMotionState(motionState);
         } // Para meshes
-
-        public float accelFactor() {
-            return 2*(1/body.getLocalInertia().len2());
-        }
 
         static class Constructor implements Disposable {
             public final Model model;
@@ -114,7 +86,6 @@ public class PruebasSucias extends Game {
 
         @Override
         public void dispose() {
-            model.dispose();
             body.dispose();
             motionState.dispose();
         }
@@ -127,8 +98,6 @@ public class PruebasSucias extends Game {
                 ((ColorAttribute)instances.get(userValue0).materials.get(0).get(ColorAttribute.Diffuse)).color.set(Color.WHITE);
             if (match1)
                 ((ColorAttribute)instances.get(userValue1).materials.get(0).get(ColorAttribute.Diffuse)).color.set(Color.WHITE);
-
-            ctrl=true;
             return true;
         }
     } // Sobreescribir que pasa cuando hay contacto
@@ -142,7 +111,7 @@ public class PruebasSucias extends Game {
         public void setWorldTransform (Matrix4 worldTrans) {
             transform.set(worldTrans);
         }
-    }
+    } // Sobreescribir que pasa cuando bullet mueve el objeto fisico
     Array<Player> instances;
     ArrayMap<String, Player.Constructor> constructors;
     PerspectiveCamera cam;
@@ -162,11 +131,9 @@ public class PruebasSucias extends Game {
 
     float spawnTimer=1;
 
-    final static short GHOST_FLAG = 1<<7; // Fantasmos
     final static short GROUND_FLAG = 1<<8; // Flag suelo (inmovible)
     final static short OBJECT_FLAG = 1<<9; // Flag item (tiene fisicotas guays)
     final static short ALL_FLAG = -1; // Colision con todos los items
-
 
     @Override
     public void create() {
@@ -189,18 +156,12 @@ public class PruebasSucias extends Game {
         // De esta forma lo dejamos como "Activo" para que los objetos que colisionen con el
         // no entren en estado "awaiting_deactivation" y al final "sleeping_island" junto al suelo
 
-        pito= new Pito(model, "obama", new btSphereShape(0.5f));
-        pito.body.setContactCallbackFilter(0);
-        dynamicsWorld.addCollisionObject(pito.body);
-
-        spawn();
-        spawn();
     }
 
     // Inicializar la brea dura, mirar adentro para mas info
     private void initThingos() {
         // Arrancamos bullet y los batchs
-        //Bullet.init();
+        Bullet.init();
         font = new BitmapFont();
         batch = new SpriteBatch();
         modelBatch = new ModelBatch();
@@ -215,7 +176,6 @@ public class PruebasSucias extends Game {
         cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         cam.position.set(3f, 7f, 10f);
         cam.lookAt(0, 4f, 0);
-        cam.far = 1000f;
         cam.update();
 
         camController = new CameraInputController(cam);
@@ -227,7 +187,7 @@ public class PruebasSucias extends Game {
         broadPhase = new btDbvtBroadphase(); // Para aproximar la verga de colisiones sin cagar mucho rendimiento
         constraintSolver = new btSequentialImpulseConstraintSolver(); // tengo que mirar esto de nuevo
         dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, broadPhase, constraintSolver, colConfig); // como el collisionWorld pero gucci
-        dynamicsWorld.setGravity(new Vector3(0, -30f, 0));
+        dynamicsWorld.setGravity(new Vector3(0, -10f, 0));
         contactListener = new CollisionListener(); // Sobreescribir el ContactListener por defecto
 
         instances = new Array<>();
@@ -249,7 +209,7 @@ public class PruebasSucias extends Game {
         mb.node("sanchez", am.get("playerModel/poliedroSanchez/poliedro_sanchez.g3db", Model.class));
         mb.node().id = "ground";
         mb.part("ground", GL20.GL_TRIANGLES, Usage.Position | Usage.Normal, new Material(ColorAttribute.createDiffuse(Color.RED)))
-                .box(400f, 0.2f, 400f);
+                .box(5f, 1f, 5f);
         mb.node().id = "sphere";
         mb.part("sphere", GL20.GL_TRIANGLES, Usage.Position | Usage.Normal, new Material(ColorAttribute.createDiffuse(Color.GREEN)))
                 .sphere(1f, 1f, 1f, 10, 10);
@@ -271,8 +231,8 @@ public class PruebasSucias extends Game {
     // Carga la factoria de instancias
     private void loadConstructors() {
         constructors = new ArrayMap<>(String.class, Player.Constructor.class);
-        constructors.put("ground", new Player.Constructor(model, "ground", new btBoxShape(new Vector3(200f, 0.1f, 200f)), 0f));
-        constructors.put("sphere", new Player.Constructor(model, "cuboy", new btSphereShape(0.5f), 1f));
+        constructors.put("ground", new Player.Constructor(model, "ground", new btBoxShape(new Vector3(2.5f, 0.5f, 2.5f)), 0f));
+        constructors.put("sphere", new Player.Constructor(model, "sphere", new btSphereShape(0.5f), 1f));
         constructors.put("box", new Player.Constructor(model, "box", new btBoxShape(new Vector3(0.5f, 0.5f, 0.5f)), 1f));
         constructors.put("cone", new Player.Constructor(model, "cone", new btConeShape(0.5f, 2f), 1f));
         constructors.put("capsule", new Player.Constructor(model, "capsule", new btCapsuleShape(.5f, 1f), 1f));
@@ -292,9 +252,6 @@ public class PruebasSucias extends Game {
         // Tiempo entre frames, minimo por si hay penco lag a 2 fps para que funke el bullet
         final float delta = Math.min(1/30f, Gdx.graphics.getDeltaTime());
 
-        if (ctrl)
-            dispose();
-
         // Movemos cam
         camController.update();
 
@@ -302,41 +259,23 @@ public class PruebasSucias extends Game {
         Gdx.gl.glClearColor(0.3f, 0.3f, 0.3f, 1.f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
-        // Updatear aki fisicas
-        Player pl = instances.get(1);
-        Vector3 impulse = new Vector3();
-        impulse.mulAdd(new Vector3(1,0,0).nor(),delta*pl.accelFactor());
+        // Buen seno bro
+        angle = (angle + delta * speed) % 360f;
+        instances.get(0).transform.setTranslation(0, MathUtils.sinDeg(angle) * 2.5f, 0f);
 
-        if (Gdx.input.isKeyPressed(Input.Keys.UP))
-            pl.body.applyCentralImpulse(impulse);
-        if (Gdx.input.isKeyPressed(Input.Keys.DOWN))
-            pl.body.applyCentralImpulse(impulse.cpy().rotate(new Vector3(0,1,0),180));
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT))
-            pl.body.applyCentralImpulse(impulse.cpy().rotate(new Vector3(0,1,0),90));
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT))
-            pl.body.applyCentralImpulse(impulse.cpy().rotate(new Vector3(0,1,0),270));
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
-            pl.body.applyCentralImpulse(new Vector3(0,10,0));
-        if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
-            pl.body.setWorldTransform(pl.body.getWorldTransform().setToTranslation(0,5,0));
-            pl.body.setLinearVelocity(new Vector3(0,0,0));
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
-            Vector3 xd = pl.body.getLinearVelocity().cpy();
-            pl.body.applyCentralImpulse(new Vector3().mulAdd(xd,-delta*2.5f));
-        }
-
-
-
-
-
+        // Updateamos colisiones
         // Esta verga sincroniza las transform gracias al MotionState
         // Esta verga produce eventos para el CollisionListener
+        // Esta verga
         dynamicsWorld.stepSimulation(delta, 5, 1f/60f);
+
+        if ((spawnTimer -= delta) < 1) {
+            spawn();
+            spawnTimer = 1.3f;
+        }
 
         modelBatch.begin(cam);
         modelBatch.render(instances, environment);
-        modelBatch.render(pito, environment);
         modelBatch.end();
 
         batch.begin();
@@ -347,7 +286,7 @@ public class PruebasSucias extends Game {
     }
 
     public void spawn() {
-        Player obj = constructors.get("sphere").construct();
+        Player obj = constructors.values[1 + MathUtils.random(constructors.size - 2)].construct();
         obj.transform.setFromEulerAngles(MathUtils.random(360f), MathUtils.random(360f), MathUtils.random(360f));
         obj.transform.trn(MathUtils.random(-2.5f, 2.5f), 9f, MathUtils.random(-2.5f, 2.5f));
         obj.body.proceedToTransform(obj.transform);
@@ -356,8 +295,7 @@ public class PruebasSucias extends Game {
         instances.add(obj);
         dynamicsWorld.addRigidBody(obj.body);
         obj.body.setContactCallbackFlag(OBJECT_FLAG);
-        obj.body.setContactCallbackFilter(0);
-        obj.body.setFriction(20);
+        obj.body.setContactCallbackFilter(GROUND_FLAG);
     }
 
     @Override

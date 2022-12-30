@@ -2,7 +2,13 @@ package com.obamaracingrgb.game;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import cosasFeas.PruebasSucias;
+import com.badlogic.gdx.physics.bullet.Bullet;
+import com.badlogic.gdx.utils.Array;
+import cosasFeas.*;
+import tests.CollisionChek;
+import tests.PhysTest;
+import tests.PhysTestLaSecuela;
+import tests.TestSerio1;
 
 import java.util.Scanner;
 
@@ -11,9 +17,21 @@ public class DesktopLauncher {
 	public static void main (String[] arg) {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		config.useVsync(false);
-		//config.setForegroundFPS(600);
-		//config.setIdleFPS(20);
 
+		Bullet.init();
+		Array<Player> yogadores = new Array<>();
+		// Cargas modelos jugadores
+		Track1 si = new Track1(yogadores, null);
+
+		new Lwjgl3Application(si, config);
+
+
+
+
+
+		// Cosa sexy
+
+		/*
 		System.out.println("Tests");
 		System.out.println("0. El bueno");
 		System.out.println("1. CollisionCheker");
@@ -49,5 +67,7 @@ public class DesktopLauncher {
 			default:
 					new Lwjgl3Application(new ObamaRGBGameClass(), config);
 		}
+
+		 */
 	}
 }
