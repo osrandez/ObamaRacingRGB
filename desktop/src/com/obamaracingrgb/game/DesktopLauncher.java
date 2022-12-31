@@ -21,7 +21,8 @@ public class DesktopLauncher {
 		Bullet.init();
 		Array<Player> yogadores = new Array<>();
 		// Cargas modelos jugadores
-		Track1 si = new Track1(yogadores, null);
+		//Track1 si = new Track1(yogadores, null);
+		ObamaRGBGameClass si = new ObamaRGBGameClass();
 
 		new Lwjgl3Application(si, config);
 
