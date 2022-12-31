@@ -8,6 +8,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ConcurrentHashMap;
 
+//todo Rehacer esto xd
 
 public class Server{
     boolean open;

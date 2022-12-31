@@ -55,7 +55,11 @@ public class Track1 extends Game {
 
     public Track1(Array<Player> yogadores, Player yogadorCliente) {
         super();
-        this.players = yogadores;
+        if (yogadores!=null)
+            this.players = yogadores;
+        else
+            this.players = new Array<>();
+
         this.actualPlayer = yogadorCliente;
 
         suelosVarios= new Array<>();
