@@ -1,4 +1,4 @@
-package com.obamaracingrgb.game;
+package com.obamaracingrgb.dominio;
 
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.physics.bullet.linearmath.btMotionState;

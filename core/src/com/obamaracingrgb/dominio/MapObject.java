@@ -1,4 +1,4 @@
-package com.obamaracingrgb.game;
+package com.obamaracingrgb.dominio;
 
 import bulletUtils.BulletFlags;
 import com.badlogic.gdx.graphics.g3d.Model;
@@ -11,8 +11,8 @@ import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.utils.Disposable;
 
 public class MapObject extends ModelInstance implements Disposable {
-    btRigidBody body;
-    MotionState motionState;
+    public btRigidBody body;
+    public MotionState motionState;
 
     public MapObject(Model model, btRigidBody.btRigidBodyConstructionInfo info) {
         super(model);
@@ -43,7 +43,7 @@ public class MapObject extends ModelInstance implements Disposable {
     }
 
 
-    static class Constructor implements Disposable {
+    public static class Constructor implements Disposable {
         public final Model model;
         public final String node;
         public final btCollisionShape shape;

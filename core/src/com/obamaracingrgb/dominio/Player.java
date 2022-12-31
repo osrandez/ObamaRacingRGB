@@ -1,4 +1,4 @@
-package com.obamaracingrgb.game;
+package com.obamaracingrgb.dominio;
 
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
@@ -29,7 +29,7 @@ public class Player extends ModelInstance implements Disposable {
         return 2*(1/body.getLocalInertia().len2());
     }
 
-    static class Constructor implements Disposable {
+    public static class Constructor implements Disposable {
         public final Model model;
         public final String node;
         public final btCollisionShape shape;

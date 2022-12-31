@@ -1,34 +1,55 @@
 package com.obamaracingrgb.game;
 
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import com.badlogic.gdx.graphics.g3d.Model;
+import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.physics.bullet.Bullet;
 import com.badlogic.gdx.utils.Array;
-import cosasFeas.*;
-import tests.CollisionChek;
-import tests.PhysTest;
-import tests.PhysTestLaSecuela;
-import tests.TestSerio1;
+import com.obamaracingrgb.dominio.Player;
+import com.obamaracingrgb.net.client.Client;
+import com.obamaracingrgb.net.server.Server;
 
 import java.util.Scanner;
 
 // Please note that on macOS your application needs to be started with the -XstartOnFirstThread JVM argument
 public class DesktopLauncher {
+	public static int optParser(int max) {
+		do {
+			System.out.print("Elige pibe (0-"+max+"): ");
+			String line = new Scanner(System.in).nextLine();
+			int xd=-1;
+			try {
+				xd = Integer.parseInt(line);
+			} catch (Exception ignored) {}
+			if (xd > 0 || xd <= max)
+				return xd;
+		} while(true);
+	}
+
 	public static void main (String[] arg) {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		config.useVsync(false);
 
+		System.out.println("Setup...");
+
 		Bullet.init();
 		Array<Player> yogadores = new Array<>();
-		// Cargas modelos jugadores
-		//Track1 si = new Track1(yogadores, null);
-		ObamaRGBGameClass si = new ObamaRGBGameClass();
 
+		System.out.println("1. Cliente");
+		System.out.println("2. Servidor");
+		int cs = optParser(2);
+
+		if (cs==1) { // Cliente
+			Client c = new Client();
+		} else { // Server
+			Server s = new Server();
+		}
+
+
+		Track1 si = new Track1(yogadores, null);
 		new Lwjgl3Application(si, config);
-
-
-
-
 
 		// Cosa sexy
 

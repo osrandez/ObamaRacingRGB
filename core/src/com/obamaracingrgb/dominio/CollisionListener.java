@@ -1,8 +1,7 @@
-package com.obamaracingrgb.game;
+package com.obamaracingrgb.dominio;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.physics.bullet.collision.ContactListener;
+import com.obamaracingrgb.dominio.Player;
 
 
 public class CollisionListener extends ContactListener {
