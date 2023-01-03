@@ -3,20 +3,26 @@ package com.obamaracingrgb.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 public class MainMenu implements Screen {
 
     private ObamaRGBGameClass gamu;
-    OrthographicCamera cam;
+    PerspectiveCamera cam;
     Stage stage;
     ImageButton buttonHost;
     ImageButton buttonJoin;
@@ -27,6 +33,7 @@ public class MainMenu implements Screen {
     Texture btExitImg;
 
     Texture titulo;
+    Texture fondo;
 
     public MainMenu(final ObamaRGBGameClass game){
         this.gamu = game;
@@ -34,10 +41,17 @@ public class MainMenu implements Screen {
         stage = new Stage();
         Gdx.input.setInputProcessor(stage);
 
-        cam = new OrthographicCamera();
-        cam.setToOrtho(false, 1920, 1080);
+        cam = new PerspectiveCamera();
+
+        cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        cam.position.set(2f, 6f, 2f);
+        cam.lookAt(0, 4f, 0);
+        cam.rotate(new Vector3(0, 1, 0), 20);
+        cam.far = 1000f;
+        cam.update();
 
         titulo = new Texture(Gdx.files.internal("spriteAssets/title.png"));
+        fondo = new Texture(Gdx.files.internal("spriteAssets/fondo.jpg"));
         btHostImg = new Texture(Gdx.files.internal("spriteAssets/hostPlay.png"));
         btJoinImg = new Texture(Gdx.files.internal("spriteAssets/joinPlay.png"));
         btExitImg = new Texture(Gdx.files.internal("spriteAssets/exit.png"));
@@ -54,6 +68,9 @@ public class MainMenu implements Screen {
         buttonExit.setX(0);
         buttonExit.setY(120);
 
+
+
+
         buttonHost.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -66,7 +83,10 @@ public class MainMenu implements Screen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 //System.out.println("Join presionao xd");
-                gamu.setScreen(new ClientSelectMenu(gamu));
+
+
+
+                gamu.setScreen(new IpGatherMenu(gamu));
             }
         });
 
@@ -108,14 +128,31 @@ public class MainMenu implements Screen {
 
     @Override
     public void render(float delta) {
-        ScreenUtils.clear(0, 0, 0.2f, 1);
+        //ScreenUtils.clear(0, 0, 0.2f, 1);
+        Gdx.gl.glClearColor(0.5f, 0.5f, 0.5f, 1.f);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
         cam.update();
 
+
+
         gamu.sBatch.begin();
         //gamu.font.draw(gamu.sBatch, "tumadre", 20 ,20);
+        gamu.sBatch.draw(fondo, 0, 0);
+        gamu.sBatch.end();
+
+
+        gamu.mBatch.begin(cam);
+        gamu.mBatch.render(gamu.obamna);
+        gamu.mBatch.end();
+
+        gamu.sBatch.begin();
         gamu.sBatch.draw(titulo, 0, 760);
         gamu.sBatch.end();
+
+
+
+        gamu.obamna.transform.rotate(new Vector3(0, 1, 0), 40*delta);
 
         stage.draw();
 
@@ -159,3 +196,5 @@ public class MainMenu implements Screen {
         titulo.dispose();
     }
 }
+
+
