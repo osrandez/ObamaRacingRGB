@@ -27,11 +27,11 @@ public class SubMenuScreen implements Screen {
         ScreenUtils.clear(0,0,0,1);
 
         cam.update();
-        gamu.batch.setProjectionMatrix(cam.combined);
+        gamu.sBatch.setProjectionMatrix(cam.combined);
 
-        gamu.batch.begin();
-            gamu.font.draw(gamu.batch, "Texto :)", 100, 150);
-        gamu.batch.end();
+        gamu.sBatch.begin();
+            gamu.font.draw(gamu.sBatch, "Texto :)", 100, 150);
+        gamu.sBatch.end();
 
         if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE)){
             ScreenUtils.clear(1,1,1,1);
@@ -62,5 +62,6 @@ public class SubMenuScreen implements Screen {
 
     @Override
     public void dispose() {
+
     }
 }

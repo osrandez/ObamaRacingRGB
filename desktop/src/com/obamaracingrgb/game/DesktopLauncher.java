@@ -1,5 +1,6 @@
 package com.obamaracingrgb.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
@@ -17,6 +18,7 @@ import java.util.Scanner;
 
 // Please note that on macOS your application needs to be started with the -XstartOnFirstThread JVM argument
 public class DesktopLauncher {
+	/*
 	public static int optParser(int max) {
 		do {
 			System.out.print("Elige pibe (0-"+max+"): ");
@@ -29,11 +31,19 @@ public class DesktopLauncher {
 				return xd;
 		} while(true);
 	}
-
+*/
 	public static void main (String[] arg) {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		config.useVsync(false);
+		config.setWindowedMode(1920, 1080);
 
+		ObamaRGBGameClass yugo = new ObamaRGBGameClass();
+
+		new Lwjgl3Application(yugo, config);
+
+	}
+
+		/*
 		System.out.println("Setup...");
 
 
@@ -59,7 +69,7 @@ public class DesktopLauncher {
 
 		Track1 si = new Track1(null, null);
 		new Lwjgl3Application(si, config);
-
+*/
 		// Cosa sexy
 
 		/*
@@ -100,8 +110,8 @@ public class DesktopLauncher {
 		}
 
 		 */
-	}
 
+/*
 	private static Model loadPlayerModels() {
 		AssetManager am = new AssetManager();
 		am.load("playerModel/obamaPrisme/obama_prisme.g3db", Model.class);
@@ -126,4 +136,5 @@ public class DesktopLauncher {
 		res.put("sanchez", new Player.Constructor(model, "sanchez", new btSphereShape(0.5f),1f));
 		return res;
 	}
+	*/
 }
