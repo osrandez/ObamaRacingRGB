@@ -17,6 +17,9 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import static com.obamaracingrgb.game.ObamaRGBGameClass.abajo;
+import static com.obamaracingrgb.game.ObamaRGBGameClass.izquierda;
+
 public class MainMenu implements Screen {
 
     private ObamaRGBGameClass gamu;
@@ -143,7 +146,7 @@ public class MainMenu implements Screen {
 
         gamu.sBatch.begin();
         //gamu.font.draw(gamu.sBatch, "tumadre", 20 ,20);
-        gamu.sBatch.draw(fondo, 0-1920/2, 0-1080/2);
+        gamu.sBatch.draw(fondo, izquierda, abajo);
         gamu.sBatch.end();
 
 
@@ -152,7 +155,7 @@ public class MainMenu implements Screen {
         gamu.mBatch.end();
 
         gamu.sBatch.begin();
-        gamu.sBatch.draw(titulo, 0-1920/2, 800-1080/2);
+        gamu.sBatch.draw(titulo, izquierda, abajo+800);
         gamu.sBatch.end();
 
 

@@ -17,6 +17,9 @@ import com.badlogic.gdx.utils.Disposable;
 import com.obamaracingrgb.dominio.Player;
 
 public class ObamaRGBGameClass extends Game {
+    public static final int izquierda = -1920/2;
+    public static final int abajo = -1080/2;
+
 
     public SpriteBatch sBatch;
     public ModelBatch mBatch;
@@ -37,8 +40,8 @@ public class ObamaRGBGameClass extends Game {
         playerModels = loadPlayerModels();
         pConstructors = loadPlayerConstructors(playerModels);
 
-        Gdx.graphics.setWindowedMode(1080, 720);
-        //Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+        //Gdx.graphics.setWindowedMode(1080, 720);
+        Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
 
         this.setScreen(new MainMenu(this));
     }
