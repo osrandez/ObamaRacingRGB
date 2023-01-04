@@ -36,6 +36,7 @@ public class MainMenu implements Screen {
     ModelInstance obama;
 
     Viewport view;
+    OrthographicCamera camTullida;
 
     public MainMenu(final ObamaRGBGameClass game){
         this.gamu = game;
@@ -50,6 +51,8 @@ public class MainMenu implements Screen {
         cam.update();
 
         view = new StretchViewport(1920, 1080);
+
+        camTullida = new OrthographicCamera(1920, 1080);
 
         stage = new Stage(new StretchViewport(1920, 1080));
         Gdx.input.setInputProcessor(stage);
@@ -120,6 +123,9 @@ public class MainMenu implements Screen {
         stage.addActor(buttonJoin);
         stage.addActor(buttonExit);
         //stage.add(new TextButton("Custom Btn ", textButtonStyle));
+
+
+        gamu.sBatch.setProjectionMatrix(camTullida.combined);
     }
 
     @Override
@@ -137,7 +143,7 @@ public class MainMenu implements Screen {
 
         gamu.sBatch.begin();
         //gamu.font.draw(gamu.sBatch, "tumadre", 20 ,20);
-        gamu.sBatch.draw(fondo, 0, 0);
+        gamu.sBatch.draw(fondo, 0-1920/2, 0-1080/2);
         gamu.sBatch.end();
 
 
@@ -146,7 +152,7 @@ public class MainMenu implements Screen {
         gamu.mBatch.end();
 
         gamu.sBatch.begin();
-        gamu.sBatch.draw(titulo, 0, 760);
+        gamu.sBatch.draw(titulo, 0-1920/2, 800-1080/2);
         gamu.sBatch.end();
 
 
@@ -167,6 +173,7 @@ public class MainMenu implements Screen {
     @Override
     public void resize(int width, int height) {
         view.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
+        stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
     }
 
     @Override
