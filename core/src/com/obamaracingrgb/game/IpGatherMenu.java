@@ -16,6 +16,10 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
 
+import java.io.IOException;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
 public class IpGatherMenu implements Screen {
     private final ObamaRGBGameClass gamu;
 
@@ -87,8 +91,14 @@ public class IpGatherMenu implements Screen {
         buttonJugar.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                System.out.println("IP: " + testoIP.getText());
-                System.out.println("Puerto: " + testoPort.getText());
+                try{
+                    Socket conection = new Socket(testoIP.getText(), Integer.parseInt(testoPort.getText()));
+                    gamu.setScreen(new PlayerSelectionScreen(gamu, conection));
+                } catch (Exception e) {     //ponemo exception porque no me importa que falle, hacemo lo mismo
+                    gamu.setScreen(new MainMenu(gamu));
+                }
+                //System.out.println("IP: " + testoIP.getText());
+                //System.out.println("Puerto: " + testoPort.getText());
             }
         });
 

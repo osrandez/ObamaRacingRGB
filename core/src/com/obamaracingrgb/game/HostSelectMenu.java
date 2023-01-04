@@ -13,6 +13,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
 
+import java.net.ServerSocket;
+
 public class HostSelectMenu implements Screen {
     private final ObamaRGBGameClass gamu;
 
@@ -26,8 +28,14 @@ public class HostSelectMenu implements Screen {
     private ImageButton buttonSalir;
     private ImageButton buttonJugar;
 
-    public HostSelectMenu(ObamaRGBGameClass game){
+    private ServerSocket sSok;
+    private int port;
+
+    public HostSelectMenu(ObamaRGBGameClass game, ServerSocket sSok){
+        this.sSok = sSok;
         this.gamu = game;
+
+        port = sSok.getLocalPort();
 
         stage = new Stage();
         Gdx.input.setInputProcessor(stage);
@@ -74,6 +82,10 @@ public class HostSelectMenu implements Screen {
         ScreenUtils.clear(0, 0, 0.2f, 1);
 
         cam.update();
+
+        gamu.sBatch.begin();
+            gamu.font.draw(gamu.sBatch, "Port: " + this.port, 860, 1030);
+        gamu.sBatch.end();
 
         stage.draw();
 

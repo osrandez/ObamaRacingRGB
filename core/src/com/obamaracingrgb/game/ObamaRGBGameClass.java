@@ -31,6 +31,8 @@ public class ObamaRGBGameClass extends Game {
         mBatch = new ModelBatch();
         font = new BitmapFont();
 
+        font.getData().setScale(3, 3);
+
         Bullet.init();
         playerModels = loadPlayerModels();
         pConstructors = loadPlayerConstructors(playerModels);

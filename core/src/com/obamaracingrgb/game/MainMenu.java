@@ -72,7 +72,7 @@ public class MainMenu implements Screen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 //System.out.println("Host presionao xd");
-                gamu.setScreen(new PlayerSelectionScreen(gamu, true));
+                gamu.setScreen(new PlayerSelectionScreen(gamu, null));
             }
         });
 

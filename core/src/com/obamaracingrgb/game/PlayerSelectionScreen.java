@@ -22,6 +22,7 @@ import com.obamaracingrgb.game.ObamaRGBGameClass;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -42,11 +43,11 @@ public class PlayerSelectionScreen implements Screen {
     private Texture btPlayImg;
 
     private Stage stage;
-    private boolean hots;
+    private Socket server;
 
-    public PlayerSelectionScreen(ObamaRGBGameClass game, final boolean host){
+    public PlayerSelectionScreen(ObamaRGBGameClass game, final Socket server){
         this.gamu = game;
-        this.hots = host;
+        this.server = server;
 
         cam = new PerspectiveCamera();
 
@@ -60,7 +61,7 @@ public class PlayerSelectionScreen implements Screen {
         cam.far = 1000f;
         cam.update();
 
-        players = new Array();
+        players = new Array<>();
 
         for(ObjectMap.Entry<String, Player.Constructor> con : gamu.pConstructors){
             players.add(new ModelInstance(con.value.model, con.key));
@@ -87,10 +88,10 @@ public class PlayerSelectionScreen implements Screen {
         buttonPlay.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                if(host){
+                if(server == null){
                     try{
                         ServerSocket sSok = new ServerSocket(0);
-                        gamu.setScreen(new HostSelectMenu(gamu));
+                        gamu.setScreen(new HostSelectMenu(gamu, sSok));
                     } catch (IOException e) {
                         gamu.setScreen(new MainMenu(gamu));
                     }
@@ -142,6 +143,13 @@ public class PlayerSelectionScreen implements Screen {
         stage.draw();
 
         if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
+            if(server != null){
+                try{
+                    server.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
             gamu.setScreen(new MainMenu(gamu));
         }
         if(Gdx.input.isKeyJustPressed(Input.Keys.UP)){
