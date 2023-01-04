@@ -13,6 +13,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class MainMenu implements Screen {
 
@@ -32,11 +35,10 @@ public class MainMenu implements Screen {
 
     ModelInstance obama;
 
+    Viewport view;
+
     public MainMenu(final ObamaRGBGameClass game){
         this.gamu = game;
-
-        stage = new Stage();
-        Gdx.input.setInputProcessor(stage);
 
         cam = new PerspectiveCamera();
 
@@ -46,6 +48,11 @@ public class MainMenu implements Screen {
         cam.rotate(new Vector3(0, 1, 0), 20);
         cam.far = 1000f;
         cam.update();
+
+        view = new StretchViewport(1920, 1080);
+
+        stage = new Stage(new StretchViewport(1920, 1080));
+        Gdx.input.setInputProcessor(stage);
 
         obama = new ModelInstance(gamu.playerModels, "obama");
         obama.transform.setToTranslation(0f, 4f, 0f);
@@ -159,7 +166,7 @@ public class MainMenu implements Screen {
 
     @Override
     public void resize(int width, int height) {
-
+        view.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
     }
 
     @Override

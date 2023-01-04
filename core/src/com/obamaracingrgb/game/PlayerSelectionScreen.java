@@ -17,6 +17,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.obamaracingrgb.dominio.Player;
 import com.obamaracingrgb.game.ObamaRGBGameClass;
 
@@ -45,14 +47,13 @@ public class PlayerSelectionScreen implements Screen {
     private Stage stage;
     private Socket server;
 
+    private Viewport view;
+
     public PlayerSelectionScreen(ObamaRGBGameClass game, final Socket server){
         this.gamu = game;
         this.server = server;
 
         cam = new PerspectiveCamera();
-
-        stage = new Stage();
-        Gdx.input.setInputProcessor(stage);
 
         cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         cam.position.set(2.1f, 0f, -1.5f);
@@ -60,6 +61,11 @@ public class PlayerSelectionScreen implements Screen {
         cam.rotate(new Vector3(0, 1, 0), 23);
         cam.far = 1000f;
         cam.update();
+
+        view = new StretchViewport(1920, 1080);
+
+        stage = new Stage(new StretchViewport(1920, 1080));
+        Gdx.input.setInputProcessor(stage);
 
         players = new Array<>();
 

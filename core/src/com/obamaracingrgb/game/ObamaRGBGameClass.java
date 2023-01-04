@@ -37,7 +37,8 @@ public class ObamaRGBGameClass extends Game {
         playerModels = loadPlayerModels();
         pConstructors = loadPlayerConstructors(playerModels);
 
-        Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+        Gdx.graphics.setWindowedMode(1080, 720);
+        //Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
 
         this.setScreen(new MainMenu(this));
     }

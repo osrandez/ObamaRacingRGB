@@ -15,6 +15,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -37,14 +39,18 @@ public class IpGatherMenu implements Screen {
     private ImageButton buttonSalir;
     private ImageButton buttonJugar;
 
+    private Viewport view;
+
     public IpGatherMenu(ObamaRGBGameClass game){
         this.gamu = game;
 
-        stage = new Stage();
-        Gdx.input.setInputProcessor(stage);
-
         cam = new OrthographicCamera();
         cam.setToOrtho(false, 1920, 1080);
+
+        view = new StretchViewport(1920, 1080, cam);
+
+        stage = new Stage(new StretchViewport(1920, 1080));
+        Gdx.input.setInputProcessor(stage);
 
         fuentesita = new BitmapFont();
         fuentesita.getData().setScale(3, 3);

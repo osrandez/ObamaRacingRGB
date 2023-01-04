@@ -12,6 +12,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class ClientSelectMenu implements Screen {
     private final ObamaRGBGameClass gamu;
@@ -24,15 +26,19 @@ public class ClientSelectMenu implements Screen {
 
     private ImageButton buttonSalir;
 
+    private Viewport view;
+
 
     public ClientSelectMenu(ObamaRGBGameClass game){
         this.gamu = game;
 
-        stage = new Stage();
-        Gdx.input.setInputProcessor(stage);
-
         cam = new OrthographicCamera();
         cam.setToOrtho(false, 1920, 1080);
+
+        view = new StretchViewport(1920, 1080);
+
+        stage = new Stage(new StretchViewport(1920, 1080));
+        Gdx.input.setInputProcessor(stage);
 
         btSalirImg = new Texture(Gdx.files.internal("spriteAssets/Salir.png"));
 
