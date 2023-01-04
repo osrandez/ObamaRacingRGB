@@ -25,8 +25,6 @@ public class ObamaRGBGameClass extends Game {
     public ArrayMap<String, Player.Constructor> pConstructors;
     private PerspectiveCamera cam;
 
-    public ModelInstance obamna;
-
     @Override
     public void create() {
         sBatch = new SpriteBatch();
@@ -37,8 +35,7 @@ public class ObamaRGBGameClass extends Game {
         playerModels = loadPlayerModels();
         pConstructors = loadPlayerConstructors(playerModels);
 
-        obamna = new ModelInstance(playerModels, "obama");
-        obamna.transform.setToTranslation(0f, 4f, 0f);
+        Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
 
         this.setScreen(new MainMenu(this));
     }

@@ -1,14 +1,18 @@
 package com.obamaracingrgb.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
 
@@ -19,8 +23,15 @@ public class IpGatherMenu implements Screen {
 
     private OrthographicCamera cam;
 
-    private TextField testo;
+    private TextField testoIP;
+    private TextField testoPort;
     private BitmapFont fuentesita;
+
+    private Texture btSalirImg;
+    private Texture btJugarImg;
+
+    private ImageButton buttonSalir;
+    private ImageButton buttonJugar;
 
     public IpGatherMenu(ObamaRGBGameClass game){
         this.gamu = game;
@@ -39,17 +50,53 @@ public class IpGatherMenu implements Screen {
         joquin.font = fuentesita;
         joquin.cursor = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("spriteAssets/cursor.png"))));
         joquin.selection = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("spriteAssets/selection.png"))));
-        joquin.background = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("spriteAssets/textoBkg.png"))));
+        joquin.background = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("spriteAssets/text.png"))));
 
-        testo = new TextField("texto", joquin);
-        testo.setX(910);
-        testo.setY(540);
-        testo.setHeight(80);
-        testo.setWidth(800);
-        testo.setAlignment(1);
+        testoIP = new TextField("Server IP", joquin);
+        testoIP.setX(752 - 300);
+        testoIP.setY(540);
+        testoIP.setHeight(70);
+        testoIP.setWidth(415);
+        testoIP.setAlignment(1);
+
+        testoPort = new TextField("Server port", joquin);
+        testoPort.setX(752 + 300);
+        testoPort.setY(540);
+        testoPort.setHeight(70);
+        testoPort.setWidth(415);
+        testoPort.setAlignment(1);
+
+        btSalirImg = new Texture(Gdx.files.internal("spriteAssets/Salir.png"));
+        btJugarImg = new Texture(Gdx.files.internal("spriteAssets/jugar.png"));
+
+        buttonSalir = new ImageButton(new TextureRegionDrawable(new TextureRegion(btSalirImg)));
+        buttonSalir.setX(1920/4 - btSalirImg.getWidth()/2);
+        buttonSalir.setY(-20);
+
+        buttonJugar = new ImageButton(new TextureRegionDrawable(new TextureRegion(btJugarImg)));
+        buttonJugar.setX(1920/4 - btSalirImg.getWidth()/2 + 1920/2);
+        buttonJugar.setY(-20);
+
+        buttonSalir.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                gamu.setScreen(new MainMenu(gamu));
+            }
+        });
+
+        buttonJugar.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                System.out.println("IP: " + testoIP.getText());
+                System.out.println("Puerto: " + testoPort.getText());
+            }
+        });
 
 
-        stage.addActor(testo);
+        stage.addActor(testoIP);
+        stage.addActor(testoPort);
+        stage.addActor(buttonSalir);
+        stage.addActor(buttonJugar);
     }
     @Override
     public void show() {
@@ -63,6 +110,10 @@ public class IpGatherMenu implements Screen {
         cam.update();
 
         stage.draw();
+
+        if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
+            this.gamu.setScreen(new MainMenu(gamu));
+        }
     }
 
     @Override

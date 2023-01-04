@@ -4,19 +4,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 public class MainMenu implements Screen {
@@ -35,6 +30,8 @@ public class MainMenu implements Screen {
     Texture titulo;
     Texture fondo;
 
+    ModelInstance obama;
+
     public MainMenu(final ObamaRGBGameClass game){
         this.gamu = game;
 
@@ -44,11 +41,14 @@ public class MainMenu implements Screen {
         cam = new PerspectiveCamera();
 
         cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        cam.position.set(2f, 6f, 2f);
-        cam.lookAt(0, 4f, 0);
+        cam.position.set(2f, 4.5f, 2f);
+        cam.lookAt(0, 4.2f, 0);
         cam.rotate(new Vector3(0, 1, 0), 20);
         cam.far = 1000f;
         cam.update();
+
+        obama = new ModelInstance(gamu.playerModels, "obama");
+        obama.transform.setToTranslation(0f, 4f, 0f);
 
         titulo = new Texture(Gdx.files.internal("spriteAssets/title.png"));
         fondo = new Texture(Gdx.files.internal("spriteAssets/fondo.jpg"));
@@ -68,14 +68,11 @@ public class MainMenu implements Screen {
         buttonExit.setX(0);
         buttonExit.setY(120);
 
-
-
-
         buttonHost.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 //System.out.println("Host presionao xd");
-                gamu.setScreen(new HostSelectMenu(gamu));
+                gamu.setScreen(new PlayerSelectionScreen(gamu, true));
             }
         });
 
@@ -83,9 +80,6 @@ public class MainMenu implements Screen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 //System.out.println("Join presionao xd");
-
-
-
                 gamu.setScreen(new IpGatherMenu(gamu));
             }
         });
@@ -134,8 +128,6 @@ public class MainMenu implements Screen {
 
         cam.update();
 
-
-
         gamu.sBatch.begin();
         //gamu.font.draw(gamu.sBatch, "tumadre", 20 ,20);
         gamu.sBatch.draw(fondo, 0, 0);
@@ -143,7 +135,7 @@ public class MainMenu implements Screen {
 
 
         gamu.mBatch.begin(cam);
-        gamu.mBatch.render(gamu.obamna);
+        gamu.mBatch.render(obama);
         gamu.mBatch.end();
 
         gamu.sBatch.begin();
@@ -152,7 +144,7 @@ public class MainMenu implements Screen {
 
 
 
-        gamu.obamna.transform.rotate(new Vector3(0, 1, 0), 40*delta);
+        obama.transform.rotate(new Vector3(0, 1, 0), 40*delta);
 
         stage.draw();
 

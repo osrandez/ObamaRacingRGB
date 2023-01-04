@@ -1,6 +1,7 @@
 package com.obamaracingrgb.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -75,6 +76,10 @@ public class HostSelectMenu implements Screen {
         cam.update();
 
         stage.draw();
+
+        if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
+            this.gamu.setScreen(new MainMenu(gamu));
+        }
     }
 
     @Override
