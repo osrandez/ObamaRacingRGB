@@ -40,11 +40,17 @@ public class TCPThread extends Thread{
 
             comiensa.await();
             //comiensa la partida
+            /*
             synchronized (this.players) {
                 for (Player p : players) {
                     out.write(p.name + "\r\n");
                 }
             }
+            */
+            for (int i=0; i<players.size; i++) {
+                out.write(players.get(i).name + "\r\n");
+            }
+
             out.flush();
 
         }catch (IOException e){
