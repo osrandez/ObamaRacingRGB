@@ -28,22 +28,22 @@ public class TCPThread extends Thread{
         String info;
 
         try(BufferedWriter out = new BufferedWriter(new OutputStreamWriter(conection.getOutputStream()));
-        BufferedReader in = new BufferedReader(new InputStreamReader(conection.getInputStream()))) {
+            BufferedReader in = new BufferedReader(new InputStreamReader(conection.getInputStream()))) {
 
-                info = in.readLine();   //id del objeto a crear
-                synchronized (this.players) {
-                    players.add(gamu.pConstructors.get(info).construct());
-                    out.write("" + players.size + "\r\n");
-                }
-                out.flush();
+            info = in.readLine();
+            System.out.println(info);
+            synchronized (this.players) {
+                players.add(gamu.pConstructors.get(info).construct());
+                out.write("" + players.size + "\r\n");
+            }
+            out.flush();
 
-                comiensa.await();
-                //comiensa la partida
-                for (Player p : players) {
-                    String id = p.name;
-                    out.write(id + "\r\n");
-                }
-                out.flush();
+            comiensa.await();
+            //comiensa la partida
+            for (Player p : players) {
+                out.write(p.name + "\r\n");
+            }
+            out.flush();
 
         }catch (IOException e){
             //tampoco

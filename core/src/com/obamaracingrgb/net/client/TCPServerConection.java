@@ -14,13 +14,15 @@ public class TCPServerConection extends Thread{
     private Array<Player> players;
     private Player actual;
     private String modelName;
+    private int pos;
 
-    public TCPServerConection(Socket conection, ObamaRGBGameClass game, Array<Player> players, Player actual, String name){
+    public TCPServerConection(Socket conection, ObamaRGBGameClass game, Array<Player> players, Player actual){
         this.conection = conection;
         this.gamu = game;
         this.players = players;
         this.actual = actual;
-        this.modelName = name;
+        this.modelName = actual.nodes.get(0).id;
+        this.pos = -1;
     }
 
     @Override
@@ -32,14 +34,18 @@ public class TCPServerConection extends Thread{
             out.flush();
             //Mandamos el nombre del modelo a construir
 
-            int posInList = Integer.parseInt(in.readLine());
+            pos = Integer.parseInt(in.readLine());
+            int contador = 0;
             //recibimos la posicion que tendremos en el array
 
             String line;
             while((line = in.readLine()) != null){
-                this.players.add(gamu.pConstructors.get(line).construct());
+                System.out.println("Linea: "+line);
+                if (contador==pos)
+                    this.players.add(actual);
+                else
+                    this.players.add(gamu.pConstructors.get(line).construct());
             }
-            actual = this.players.get(posInList);
             //consutruimos la lista y sacamos actual
         }
         catch(IOException e){

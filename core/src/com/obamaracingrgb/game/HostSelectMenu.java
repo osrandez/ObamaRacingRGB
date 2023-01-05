@@ -18,6 +18,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.obamaracingrgb.dominio.Player;
 import com.obamaracingrgb.net.server.ServerThread;
 
+import java.io.IOException;
 import java.net.ServerSocket;
 
 public class HostSelectMenu implements Screen {
@@ -44,7 +45,7 @@ public class HostSelectMenu implements Screen {
 
     private Thread aceptarConexiones;
 
-    public HostSelectMenu(ObamaRGBGameClass game, ServerSocket sSok, String modelName){
+    public HostSelectMenu(ObamaRGBGameClass game, final ServerSocket sSok, String modelName){
         this.sSok = sSok;
         this.gamu = game;
 
@@ -81,6 +82,11 @@ public class HostSelectMenu implements Screen {
         buttonSalir.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
+                try {
+                    sSok.close();
+                } catch (IOException e) {
+                    System.out.println("cerramos mal xd");
+                }
                 gamu.setScreen(new MainMenu(gamu));
             }
         });
