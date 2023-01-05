@@ -26,7 +26,6 @@ public class ObamaRGBGameClass extends Game {
     public BitmapFont font;
     public Model playerModels;
     public ArrayMap<String, Player.Constructor> pConstructors;
-    private PerspectiveCamera cam;
 
     @Override
     public void create() {

@@ -47,7 +47,8 @@ public class ServerThread extends Thread{
         comiensa.countDown();
 
         for(Player p : players){
-            System.out.println(p.toString());
+            System.out.println(p.nodes.get(0).id); // esto no va a ir te aviso de ya
+            // dejame un rato sin que mis padres me molesten y te lo miro
         }
 
         try{

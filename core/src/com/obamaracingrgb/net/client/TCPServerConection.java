@@ -47,7 +47,7 @@ public class TCPServerConection extends Thread{
         }
 
         for(Player p : players){
-            System.out.println(p.toString());
+            System.out.println(p.nodes.get(0).id);
         }
 
         try {
