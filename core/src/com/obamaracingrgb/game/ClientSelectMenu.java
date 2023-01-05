@@ -51,6 +51,7 @@ public class ClientSelectMenu implements Screen {
 
         //Que asco de linea xd
         conexionServidor = new TCPServerConection(server, this.gamu, yogadores, actual);
+        conexionServidor.start();
 
         cam = new OrthographicCamera();
         cam.setToOrtho(false, 1920, 1080);

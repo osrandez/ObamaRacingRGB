@@ -25,7 +25,7 @@ public class TCPThread extends Thread{
 
     @Override
     public void run() {
-        String info;
+        String info = null;
 
         try(BufferedWriter out = new BufferedWriter(new OutputStreamWriter(conection.getOutputStream()));
             BufferedReader in = new BufferedReader(new InputStreamReader(conection.getInputStream()))) {
@@ -34,7 +34,7 @@ public class TCPThread extends Thread{
             System.out.println(info);
             synchronized (this.players) {
                 players.add(gamu.pConstructors.get(info).construct());
-                out.write("" + players.size + "\r\n");
+                out.write((players.size-1) + "\r\n"); // Indice
             }
             out.flush();
 

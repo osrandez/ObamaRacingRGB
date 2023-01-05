@@ -23,6 +23,7 @@ public class TCPServerConection extends Thread{
         this.actual = actual;
         this.modelName = actual.nodes.get(0).id;
         this.pos = -1;
+        System.out.println("ModelName: "+ modelName);
     }
 
     @Override
@@ -32,26 +33,32 @@ public class TCPServerConection extends Thread{
 
             out.write(modelName + "\r\n");
             out.flush();
-            //Mandamos el nombre del modelo a construir
+            System.out.println("Flushiamos name");
 
             pos = Integer.parseInt(in.readLine());
             int contador = 0;
-            //recibimos la posicion que tendremos en el array
+            System.out.println("Nuestra pos es "+pos);
 
             String line;
             while((line = in.readLine()) != null){
                 System.out.println("Linea: "+line);
-                if (contador==pos)
+                if (contador==pos) {
                     this.players.add(actual);
-                else
+                    System.out.println("Nosotros");
+                } else {
                     this.players.add(gamu.pConstructors.get(line).construct());
+                    contador++;
+                }
             }
+
+            System.out.println(players.get(pos)==actual);
             //consutruimos la lista y sacamos actual
         }
         catch(IOException e){
             //nada que evr aqui :(
         }
 
+        System.out.println("Procedemos a printear");
         for(Player p : players){
             System.out.println(p.nodes.get(0).id);
         }
