@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.utils.Disposable;
+import com.obamaracingrgb.net.utils.PlayerData;
 
 public class Player extends ModelInstance implements Disposable {
     public final btRigidBody body;
@@ -81,5 +82,14 @@ public class Player extends ModelInstance implements Disposable {
     @Override
     public String toString() {
         return super.toString();
+    }
+
+    public PlayerData getNetData(int n) {
+        return new PlayerData(n, body.getWorldTransform().getTranslation(new Vector3()).cpy(), body.getLinearVelocity().cpy());
+    }
+
+    public void consumeNetData(PlayerData data) {
+        body.setWorldTransform(body.getWorldTransform().setToTranslation(data.pos));
+        body.setLinearVelocity(data.linearSpd);
     }
 }
