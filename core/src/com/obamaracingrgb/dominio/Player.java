@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.Disposable;
 public class Player extends ModelInstance implements Disposable {
     public final btRigidBody body;
     public final MotionState motionState; // Sincronisar matrices4
+    public String name;
     public Player(Model model, btRigidBody.btRigidBodyConstructionInfo info) {
         super(model);
         motionState = new MotionState();
@@ -20,6 +21,7 @@ public class Player extends ModelInstance implements Disposable {
     } // Para modelos unicos
     public Player(Model model, String n, btRigidBody.btRigidBodyConstructionInfo info) {
         super(model,n);
+        name = n;
         motionState = new MotionState();
         motionState.transform = transform;
         this.body = new btRigidBody(info);
@@ -74,5 +76,10 @@ public class Player extends ModelInstance implements Disposable {
     public void dispose() {
         body.dispose();
         motionState.dispose();
+    }
+
+    @Override
+    public String toString() {
+        return super.toString();
     }
 }

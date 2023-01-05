@@ -94,15 +94,17 @@ public class PlayerSelectionScreen implements Screen {
         buttonPlay.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
+                ModelInstance juan = players.get(players.indexOf(actual, true));
+                System.out.println(juan.nodes.get(0).id);
                 if(server == null){
                     try{
                         ServerSocket sSok = new ServerSocket(0);
-                        gamu.setScreen(new HostSelectMenu(gamu, sSok));
+                        gamu.setScreen(new HostSelectMenu(gamu, sSok, juan.nodes.get(0).id));
                     } catch (IOException e) {
                         gamu.setScreen(new MainMenu(gamu));
                     }
                 }else{
-                    gamu.setScreen(new ClientSelectMenu(gamu));
+                    gamu.setScreen(new ClientSelectMenu(gamu, server, juan.nodes.get(0).id));
                 }
             }
         });

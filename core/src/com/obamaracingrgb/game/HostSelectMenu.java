@@ -11,9 +11,12 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.obamaracingrgb.dominio.Player;
+import com.obamaracingrgb.net.server.ServerThread;
 
 import java.net.ServerSocket;
 
@@ -35,13 +38,28 @@ public class HostSelectMenu implements Screen {
 
     private Viewport view;
 
-    public HostSelectMenu(ObamaRGBGameClass game, ServerSocket sSok){
+    private Array<Player> yogadores;
+
+    private Player actual;
+
+    private Thread aceptarConexiones;
+
+    public HostSelectMenu(ObamaRGBGameClass game, ServerSocket sSok, String modelName){
         this.sSok = sSok;
         this.gamu = game;
 
+        actual = gamu.pConstructors.get(modelName).construct();
+
+        yogadores = new Array<>();
+
+        yogadores.add(actual);
+
+        aceptarConexiones = new ServerThread(sSok, yogadores, this.gamu);
+        aceptarConexiones.start();
+
         port = sSok.getLocalPort();
 
-        cam = new OrthographicCamera();
+        cam = new OrthographicCamera(1920, 1080);
         cam.setToOrtho(false, 1920, 1080);
 
         view = new StretchViewport(1920, 1080, cam);
@@ -71,6 +89,7 @@ public class HostSelectMenu implements Screen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 System.out.println("Momento juegos 88");
+                aceptarConexiones.interrupt();
             }
         });
 
@@ -90,7 +109,7 @@ public class HostSelectMenu implements Screen {
         cam.update();
 
         gamu.sBatch.begin();
-            gamu.font.draw(gamu.sBatch, "Port: " + this.port, 860, 1030);
+            gamu.font.draw(gamu.sBatch, "Port: " + this.port, gamu.izquierda + 850, gamu.abajo + 1030);
         gamu.sBatch.end();
 
         stage.draw();

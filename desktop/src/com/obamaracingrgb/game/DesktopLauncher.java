@@ -11,8 +11,6 @@ import com.badlogic.gdx.physics.bullet.collision.btSphereShape;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.obamaracingrgb.dominio.Player;
-import com.obamaracingrgb.net.client.Client;
-import com.obamaracingrgb.net.server.Server;
 
 import java.util.Scanner;
 
