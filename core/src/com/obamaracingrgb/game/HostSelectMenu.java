@@ -96,6 +96,8 @@ public class HostSelectMenu implements Screen {
             public void changed(ChangeEvent event, Actor actor) {
                 System.out.println("Momento juegos 88");
                 aceptarConexiones.interrupt();
+                Track1 tJuan = new Track1(gamu, yogadores, actual);
+                gamu.setScreen(tJuan);
             }
         });
 

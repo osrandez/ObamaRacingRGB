@@ -29,7 +29,7 @@ public class Player extends ModelInstance implements Disposable {
     } // Para meshes
 
     public float accelFactor() {
-        return 2*(1/body.getLocalInertia().len2());
+        return (1/body.getLocalInertia().len2())/10;
     }
 
     public static class Constructor implements Disposable {
