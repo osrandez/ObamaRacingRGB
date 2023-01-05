@@ -46,6 +46,10 @@ public class TCPServerConection extends Thread{
             //nada que evr aqui :(
         }
 
+        for(Player p : players){
+            System.out.println(p.toString());
+        }
+
         try {
             conection.close();
         } catch (IOException e) {

@@ -28,10 +28,6 @@ public class ObamaRGBGameClass extends Game {
     public ArrayMap<String, Player.Constructor> pConstructors;
     private PerspectiveCamera cam;
 
-    public final int izquierda = -1920/2;
-
-    public final int abajo = -1080/2;
-
     @Override
     public void create() {
         sBatch = new SpriteBatch();

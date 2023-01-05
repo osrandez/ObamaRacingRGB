@@ -46,6 +46,10 @@ public class ServerThread extends Thread{
 
         comiensa.countDown();
 
+        for(Player p : players){
+            System.out.println(p.toString());
+        }
+
         try{
             sSok.close();
         } catch (IOException e) {
