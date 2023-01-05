@@ -47,9 +47,12 @@ public class ServerThread extends Thread{
         System.out.println("Pre CountDown");
         comiensa.countDown();
 
-        for(Player p : players){
-            System.out.println(p.nodes.get(0).id);
+        synchronized (this.players) {
+            for(Player p : players){
+                System.out.println(p.nodes.get(0).id);
+            }
         }
+
 
         try{
             sSok.close();
