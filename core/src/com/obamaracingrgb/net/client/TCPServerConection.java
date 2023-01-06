@@ -7,6 +7,7 @@ import com.obamaracingrgb.game.ObamaRGBGameClass;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class TCPServerConection extends Thread{
     private Socket conection;
@@ -15,6 +16,9 @@ public class TCPServerConection extends Thread{
     private Player actual;
     private String modelName;
     private int pos;
+
+    UDPClientRecieveThread udpIn;
+    UDPClientSenderThread udpOut;
 
     public TCPServerConection(Socket conection, ObamaRGBGameClass game, Array<Player> players, Player actual){
         this.conection = conection;
@@ -39,6 +43,20 @@ public class TCPServerConection extends Thread{
             int contador = 0;
             System.out.println("Nuestra pos es "+pos);
 
+            AtomicBoolean racismo = new AtomicBoolean(true);
+
+            udpIn = new UDPClientRecieveThread(players, pos, racismo);
+            int lPort = udpIn.lPort;
+
+            // Recibimos rPort
+            int rPort = Integer.parseInt(in.readLine());
+
+            // Mandamos lPort
+            out.write(lPort+"\r\n");
+            out.flush();
+
+            udpOut = new UDPClientSenderThread(conection.getInetAddress(), rPort, actual, pos, racismo);
+
             String line;
             while((line = in.readLine()) != null){
                 System.out.println("Linea: "+line);
@@ -50,6 +68,9 @@ public class TCPServerConection extends Thread{
                     contador++;
                 }
             }
+
+            udpIn.start();
+            udpOut.start();
 
             System.out.println(players.get(pos)==actual);
             //consutruimos la lista y sacamos actual

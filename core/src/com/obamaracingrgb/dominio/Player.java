@@ -1,9 +1,12 @@
 package com.obamaracingrgb.dominio;
 
+import bulletUtils.BulletFlags;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.utils.Disposable;
@@ -19,6 +22,9 @@ public class Player extends ModelInstance implements Disposable {
         motionState.transform = transform;
         this.body = new btRigidBody(info);
         body.setMotionState(motionState);
+        body.setCollisionFlags(body.getCollisionFlags() | btCollisionObject.CollisionFlags.CF_NO_CONTACT_RESPONSE);
+        body.setContactCallbackFlag(BulletFlags.OBJECT);
+        body.setContactCallbackFilter(BulletFlags.GHOST);
     } // Para modelos unicos
     public Player(Model model, String n, btRigidBody.btRigidBodyConstructionInfo info) {
         super(model,n);
@@ -27,6 +33,9 @@ public class Player extends ModelInstance implements Disposable {
         motionState.transform = transform;
         this.body = new btRigidBody(info);
         body.setMotionState(motionState);
+        body.setCollisionFlags(body.getCollisionFlags() | btCollisionObject.CollisionFlags.CF_NO_CONTACT_RESPONSE);
+        body.setContactCallbackFlag(BulletFlags.OBJECT);
+        body.setContactCallbackFilter(BulletFlags.GHOST);
     } // Para meshes
 
     public float accelFactor() {

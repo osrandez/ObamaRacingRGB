@@ -6,13 +6,15 @@ import com.obamaracingrgb.dominio.Player;
 
 import java.io.IOException;
 import java.net.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class UDPSenderThread extends Thread{
     private Array<Player> players;
     private DatagramSocket sendSocket;
     private ArrayMap<InetAddress, Integer> clientes;
+    AtomicBoolean racismo;
 
-    public UDPSenderThread(Array<Player> players, ArrayMap<InetAddress, Integer> rAddressses){
+    public UDPSenderThread(Array<Player> players, ArrayMap<InetAddress, Integer> rAddressses, AtomicBoolean racismo){
         this.players = players;
         try {
             sendSocket = new DatagramSocket();
@@ -20,17 +22,19 @@ public class UDPSenderThread extends Thread{
             throw new RuntimeException(e);
         }
         clientes = rAddressses;
+        this.racismo=racismo;
     }
 
     @Override
     public void run() {
         int size = players.size;
+        int cSize = clientes.size;
         byte[] paketStreamix = new byte[1500];
         DatagramPacket paketPhoenix = new DatagramPacket(paketStreamix,1500);
-        while (!isInterrupted()) {
+        while (racismo.get()) {
             try {
                 for (int player=0; player<size; player++) { // Recorremos players
-                    for (int client=0; client<size; client++) { // Recorremos clientes
+                    for (int client=0; client<cSize; client++) { // Recorremos clientes
                         paketPhoenix.setData(players.get(player).getNetData(player).serialize());
                         paketPhoenix.setAddress(clientes.getKeyAt(client));
                         paketPhoenix.setPort(clientes.getValueAt(client));
@@ -41,5 +45,6 @@ public class UDPSenderThread extends Thread{
                 throw new RuntimeException(e); // JAMAS
             }
         }
+        sendSocket.close();
     }
 }

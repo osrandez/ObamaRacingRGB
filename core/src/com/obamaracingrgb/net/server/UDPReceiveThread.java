@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class UDPReceiveThread extends Thread{
     private Array<Player> players;
@@ -15,11 +16,14 @@ public class UDPReceiveThread extends Thread{
     // TUS MUERTOS OSCAR ESTO SE DELETREA "RECEIVE" AL IGUAL QUE "DECEIVE"
     // POR ESO SE PRONUNCIA CON UNA I, YA SE QUE ES "DECEIVING" PERO LLEVO 20 MINS CON ESTO
     public int lPort;
+    private AtomicBoolean racismo;
 
-    public UDPReceiveThread(Array<Player> players){
+    public UDPReceiveThread(Array<Player> players, AtomicBoolean racismo){
         this.players = players;
+        this.racismo = racismo;
         try {
             receiveSocket = new DatagramSocket();
+            receiveSocket.setSoTimeout(1000);
         } catch (SocketException e) {
             throw new RuntimeException(e);
         }
@@ -28,10 +32,10 @@ public class UDPReceiveThread extends Thread{
 
     @Override
     public void run() {
-        byte[] buffer = new byte[1500];
-        DatagramPacket paketPhoenix = new DatagramPacket(buffer, 1500);    //lo siento mucho
+        byte[] paketStreamix = new byte[1500];
+        DatagramPacket paketPhoenix = new DatagramPacket(paketStreamix, 1500);    //lo siento mucho // yo no
         PlayerData currentPlayer;
-        while(!this.isInterrupted()){
+        while(racismo.get()){
             try {
                 receiveSocket.receive(paketPhoenix);
                 currentPlayer = PlayerData.deserialize(paketPhoenix.getData());
@@ -40,5 +44,6 @@ public class UDPReceiveThread extends Thread{
                 throw new RuntimeException(e);
             }
         }
+        receiveSocket.close();
     }
 }

@@ -16,7 +16,7 @@ public class TCPThread extends Thread{
     private ObamaRGBGameClass gamu;
     private CountDownLatch comiensa;
 
-    private static ArrayMap<InetAddress, Integer> udpRAddresses;
+    private ArrayMap<InetAddress, Integer> udpRAddresses;
     public int udpLPort;
     public int udpRPort;
 
@@ -25,8 +25,7 @@ public class TCPThread extends Thread{
         this.players = players;
         this.gamu = game;
         this.comiensa = comiensa;
-        if (udpRAddresses==null)
-            udpRAddresses = addrs;
+        this.udpRAddresses = addrs;
     }
 
     @Override
@@ -44,20 +43,18 @@ public class TCPThread extends Thread{
             }
             out.flush();
 
-            comiensa.await();
-            //comiensa la partida
-
-
             // Mandamos lPort
             out.write(udpLPort+"\r\n");
             out.flush();
 
             // Recibimos rPort
-            info = in.readLine();
-            udpRPort = Integer.parseInt(info);
+            udpRPort = Integer.parseInt(in.readLine());
 
             // Puteamos el puerto epicamente
             udpRAddresses.put(conection.getInetAddress(), udpRPort);
+
+            comiensa.await();
+            //comiensa la partida
 
             // Pasamos lista de jugadores
             for (int i=0; i<players.size; i++) {

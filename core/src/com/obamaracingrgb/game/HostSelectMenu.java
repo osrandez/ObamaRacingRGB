@@ -17,9 +17,11 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.obamaracingrgb.dominio.Player;
 import com.obamaracingrgb.net.server.ServerThread;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class HostSelectMenu implements Screen {
     private final ObamaRGBGameClass gamu;
@@ -44,10 +46,13 @@ public class HostSelectMenu implements Screen {
     private Player actual;
 
     private Thread aceptarConexiones;
+    private AtomicBoolean racismo;
 
     public HostSelectMenu(ObamaRGBGameClass game, final ServerSocket sSok, String modelName){
         this.sSok = sSok;
         this.gamu = game;
+
+
 
         actual = gamu.pConstructors.get(modelName).construct();
 
@@ -55,7 +60,8 @@ public class HostSelectMenu implements Screen {
 
         yogadores.add(actual);
 
-        aceptarConexiones = new ServerThread(sSok, yogadores, this.gamu);
+        racismo = new AtomicBoolean(true);
+        aceptarConexiones = new ServerThread(sSok, yogadores, this.gamu, racismo);
         aceptarConexiones.start();
 
         port = sSok.getLocalPort();
@@ -96,7 +102,7 @@ public class HostSelectMenu implements Screen {
             public void changed(ChangeEvent event, Actor actor) {
                 System.out.println("Momento juegos 88");
                 aceptarConexiones.interrupt();
-                Track1 tJuan = new Track1(gamu, yogadores, actual);
+                Track1 tJuan = new Track1(gamu, yogadores, actual, racismo);
                 gamu.setScreen(tJuan);
             }
         });

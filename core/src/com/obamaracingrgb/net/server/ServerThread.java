@@ -11,6 +11,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ServerThread extends Thread{
     private ServerSocket sSok;
@@ -19,19 +20,21 @@ public class ServerThread extends Thread{
     private CountDownLatch comiensa;
     private ArrayMap<InetAddress, Integer> udpRAddresses;
 
-    private static UDPSenderThread udpOut;
-    private static UDPReceiveThread udpIn;
+    private UDPSenderThread udpOut;
+    private UDPReceiveThread udpIn;
+    private AtomicBoolean racismo;
 
-    public ServerThread(ServerSocket sSok, Array<Player> players, ObamaRGBGameClass game){
+    public ServerThread(ServerSocket sSok, Array<Player> players, ObamaRGBGameClass game, AtomicBoolean racismo){
         this.sSok = sSok;
         this.players = players;
         this.gamu = game;
         this.comiensa = new CountDownLatch(1);
         udpRAddresses = new ArrayMap<>();
+        this.racismo = racismo;
 
         try {
             this.sSok.setSoTimeout(10000);
-            udpIn = new UDPReceiveThread(players);
+            udpIn = new UDPReceiveThread(players, racismo);
         }catch (SocketException e){}
     }
 
@@ -67,6 +70,10 @@ public class ServerThread extends Thread{
             System.out.println(players.get(i).nodes.get(0).id);
         }
 
+        udpOut = new UDPSenderThread(players, udpRAddresses, racismo);
+
+        udpIn.start();
+        udpOut.start();
 
         try{
             sSok.close();

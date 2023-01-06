@@ -30,8 +30,11 @@ import com.badlogic.gdx.physics.bullet.dynamics.btDynamicsWorld;
 import com.badlogic.gdx.physics.bullet.dynamics.btSequentialImpulseConstraintSolver;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
+import com.obamaracingrgb.dominio.CollisionListener;
 import com.obamaracingrgb.dominio.MapObject;
 import com.obamaracingrgb.dominio.Player;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Track1 implements Screen {
     Model model;
@@ -55,15 +58,22 @@ public class Track1 implements Screen {
 
     btConstraintSolver constraintSolver;
     ObamaRGBGameClass gamu;
+    CollisionListener escuchadorFinal;
+    AtomicBoolean racismo;
 
-    public Track1(ObamaRGBGameClass game, Array<Player> yogadores, Player actual) {
+    public Track1(ObamaRGBGameClass game, Array<Player> yogadores, Player actual, AtomicBoolean racismoRGB) {
         gamu=game;
         if (yogadores!=null)
             this.players = yogadores;
         else
             this.players = new Array<>();
+        racismo = racismoRGB;
+
+
 
         this.actualPlayer = actual;
+
+        escuchadorFinal= new CollisionListener(racismo, actualPlayer);
 
         suelosVarios= new Array<>();
         mapConstructors = new ArrayMap<>();
@@ -76,9 +86,6 @@ public class Track1 implements Screen {
         loadConstructors();
         buildLevel();
     }
-
-
-
 
     private void loadModels() {
 
