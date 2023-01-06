@@ -161,8 +161,10 @@ public class Track1 implements Screen {
         actualPlayer.transform.setFromEulerAngles(MathUtils.random(360f), MathUtils.random(360f), MathUtils.random(360f));
         actualPlayer.transform.trn(MathUtils.random(-2.5f, 2.5f), 9f, MathUtils.random(-2.5f, 2.5f));
         actualPlayer.body.proceedToTransform(actualPlayer.transform);
-        players.add(actualPlayer);
-        dynamicsWorld.addRigidBody(actualPlayer.body);
+
+        for (int i=0; i<players.size; i++) {
+            dynamicsWorld.addRigidBody(players.get(i).body);
+        }
     }
 
     @Override
