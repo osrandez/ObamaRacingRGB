@@ -2,7 +2,6 @@ package com.obamaracingrgb.net.server;
 
 import com.badlogic.gdx.utils.Array;
 import com.obamaracingrgb.dominio.Player;
-import com.obamaracingrgb.game.ObamaRGBGameClass;
 import com.obamaracingrgb.net.utils.PlayerData;
 
 import java.io.IOException;
@@ -10,18 +9,21 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 
-public class UDPRecieveThread extends Thread{
+public class UDPReceiveThread extends Thread{
     private Array<Player> players;
-    private DatagramSocket recieveSocket;
+    private DatagramSocket receiveSocket;
+    // TUS MUERTOS OSCAR ESTO SE DELETREA "RECEIVE" AL IGUAL QUE "DECEIVE"
+    // POR ESO SE PRONUNCIA CON UNA I, YA SE QUE ES "DECEIVING" PERO LLEVO 20 MINS CON ESTO
+    public int lPort;
 
-    public UDPRecieveThread(Array<Player> players){
+    public UDPReceiveThread(Array<Player> players){
         this.players = players;
         try {
-            recieveSocket = new DatagramSocket();
+            receiveSocket = new DatagramSocket();
         } catch (SocketException e) {
             throw new RuntimeException(e);
         }
-
+        lPort= receiveSocket.getLocalPort();
     }
 
     @Override
@@ -31,7 +33,7 @@ public class UDPRecieveThread extends Thread{
         PlayerData currentPlayer;
         while(!this.isInterrupted()){
             try {
-                recieveSocket.receive(paketPhoenix);
+                receiveSocket.receive(paketPhoenix);
                 currentPlayer = PlayerData.deserialize(paketPhoenix.getData());
                 players.get(currentPlayer.index).consumeNetData(currentPlayer);
             } catch (IOException e) {

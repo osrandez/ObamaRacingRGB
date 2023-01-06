@@ -1,12 +1,12 @@
 package com.obamaracingrgb.net.server;
 
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ArrayMap;
 import com.obamaracingrgb.dominio.Player;
-import com.obamaracingrgb.net.*;
 import com.obamaracingrgb.game.ObamaRGBGameClass;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -17,14 +17,21 @@ public class ServerThread extends Thread{
     private Array<Player> players;
     private ObamaRGBGameClass gamu;
     private CountDownLatch comiensa;
+    private ArrayMap<InetAddress, Integer> udpRAddresses;
+
+    private static UDPSenderThread udpOut;
+    private static UDPReceiveThread udpIn;
 
     public ServerThread(ServerSocket sSok, Array<Player> players, ObamaRGBGameClass game){
         this.sSok = sSok;
         this.players = players;
         this.gamu = game;
         this.comiensa = new CountDownLatch(1);
+        udpRAddresses = new ArrayMap<>();
+
         try {
             this.sSok.setSoTimeout(10000);
+            udpIn = new UDPReceiveThread(players);
         }catch (SocketException e){}
     }
 
@@ -36,7 +43,7 @@ public class ServerThread extends Thread{
                 if(this.isInterrupted()){
                     con.close();
                 }else{
-                    new TCPThread(con, players, gamu, comiensa).start();
+                    new TCPThread(con, players, gamu, comiensa, udpRAddresses).start();
                 }
             } catch (IOException e) {
                 //throw new RuntimeException(e);
@@ -45,6 +52,8 @@ public class ServerThread extends Thread{
         }
 
         System.out.println("Pre CountDown");
+
+
         comiensa.countDown();
 
         /*

@@ -1,12 +1,12 @@
 package com.obamaracingrgb.net.server;
 
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ArrayMap;
 import com.obamaracingrgb.dominio.Player;
 import com.obamaracingrgb.game.ObamaRGBGameClass;
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import jdk.internal.org.jline.utils.WriterOutputStream;
 
 import java.io.*;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.util.concurrent.CountDownLatch;
 
@@ -16,16 +16,22 @@ public class TCPThread extends Thread{
     private ObamaRGBGameClass gamu;
     private CountDownLatch comiensa;
 
-    public  TCPThread(Socket conection, Array<Player> players, ObamaRGBGameClass game, CountDownLatch comiensa){
+    private static ArrayMap<InetAddress, Integer> udpRAddresses;
+    public int udpLPort;
+    public int udpRPort;
+
+    public  TCPThread(Socket conection, Array<Player> players, ObamaRGBGameClass game, CountDownLatch comiensa, ArrayMap<InetAddress, Integer> addrs){
         this.conection = conection;
         this.players = players;
         this.gamu = game;
         this.comiensa = comiensa;
+        if (udpRAddresses==null)
+            udpRAddresses = addrs;
     }
 
     @Override
     public void run() {
-        String info = null;
+        String info;
 
         try(BufferedWriter out = new BufferedWriter(new OutputStreamWriter(conection.getOutputStream()));
             BufferedReader in = new BufferedReader(new InputStreamReader(conection.getInputStream()))) {
@@ -40,18 +46,23 @@ public class TCPThread extends Thread{
 
             comiensa.await();
             //comiensa la partida
-            /*
-            synchronized (this.players) {
-                for (Player p : players) {
-                    out.write(p.name + "\r\n");
-                }
-            }
-            */
+
+
+            // Mandamos lPort
+            out.write(udpLPort+"\r\n");
+            out.flush();
+
+            // Recibimos rPort
+            info = in.readLine();
+            udpRPort = Integer.parseInt(info);
+
+            // Puteamos el puerto epicamente
+            udpRAddresses.put(conection.getInetAddress(), udpRPort);
+
+            // Pasamos lista de jugadores
             for (int i=0; i<players.size; i++) {
                 out.write(players.get(i).name + "\r\n");
             }
-
-            out.flush();
 
         }catch (IOException e){
             //tampoco
