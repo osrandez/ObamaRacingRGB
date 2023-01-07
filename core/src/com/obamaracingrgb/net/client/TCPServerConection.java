@@ -31,6 +31,7 @@ public class TCPServerConection extends Thread{
         this.modelName = actual.nodes.get(0).id;
         this.pos = -1;
         this.iniciar = iniciar;
+        this.racismo = new AtomicBoolean(true);
         System.out.println("ModelName: "+ modelName);
     }
 

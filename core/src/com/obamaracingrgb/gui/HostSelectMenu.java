@@ -48,6 +48,7 @@ public class HostSelectMenu implements Screen {
 
     private Thread aceptarConexiones;
     private AtomicBoolean racismo;
+    private AtomicBoolean cancer;
 
     public HostSelectMenu(ObamaRGBGameClass game, final ServerSocket sSok, String modelName){
         this.sSok = sSok;
@@ -62,7 +63,8 @@ public class HostSelectMenu implements Screen {
         yogadores.add(actual);
 
         racismo = new AtomicBoolean(true);
-        aceptarConexiones = new ServerThread(sSok, yogadores, this.gamu, racismo);
+        cancer = new AtomicBoolean(false);
+        aceptarConexiones = new ServerThread(sSok, yogadores, this.gamu, racismo, cancer);
         aceptarConexiones.start();
 
         port = sSok.getLocalPort();
@@ -89,11 +91,8 @@ public class HostSelectMenu implements Screen {
         buttonSalir.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                try {
-                    sSok.close();
-                } catch (IOException e) {
-                    System.out.println("cerramos mal xd");
-                }
+                cancer.set(true);   //importante el orden :)
+                aceptarConexiones.interrupt();
                 gamu.setScreen(new MainMenu(gamu));
             }
         });
@@ -103,6 +102,12 @@ public class HostSelectMenu implements Screen {
             public void changed(ChangeEvent event, Actor actor) {
                 System.out.println("Momento juegos 88");
                 aceptarConexiones.interrupt();
+                try {
+                    aceptarConexiones.join();
+                } catch (InterruptedException e) {
+                    //throw new RuntimeException(e);
+                    //tu madre java con lanzar runtimes
+                }
                 Track1 tJuan = new Track1(gamu, yogadores, actual, racismo);
                 gamu.setScreen(tJuan);
             }

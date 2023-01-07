@@ -23,14 +23,16 @@ public class ServerThread extends Thread{
     private UDPSenderThread udpOut;
     private UDPReceiveThread udpIn;
     private AtomicBoolean racismo;
+    private  AtomicBoolean canser;
 
-    public ServerThread(ServerSocket sSok, Array<Player> players, ObamaRGBGameClass game, AtomicBoolean racismo){
+    public ServerThread(ServerSocket sSok, Array<Player> players, ObamaRGBGameClass game, AtomicBoolean racismo, AtomicBoolean canser){
         this.sSok = sSok;
         this.players = players;
         this.gamu = game;
         this.comiensa = new CountDownLatch(1);
         udpRAddresses = new ArrayMap<>();
         this.racismo = racismo;
+        this.canser = canser;
 
         try {
             this.sSok.setSoTimeout(10000);
@@ -65,12 +67,17 @@ public class ServerThread extends Thread{
         udpOut = new UDPSenderThread(players, udpRAddresses, racismo);
 
         udpIn.setDaemon(true);
-        udpIn.setDaemon(false);
+        udpOut.setDaemon(true);
 
-        udpIn.start();
-        udpOut.start();
+        if(!canser.get()) {
+            System.out.println("lansando udp");
+            udpIn.start();
+            udpOut.start();
+        }
 
-        System.out.println("rPort: "+ udpRAddresses.getValueAt(0));
+
+        //System.out.println("rPort: "+ udpRAddresses.getValueAt(0));   //DEBUG
+
 
         try{
             sSok.close();
