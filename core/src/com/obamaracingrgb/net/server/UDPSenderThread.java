@@ -42,7 +42,7 @@ public class UDPSenderThread extends Thread{
                     }
                 }
             } catch (IOException e) {
-                throw new RuntimeException(e); // JAMAS
+                System.out.println("envia mal");
             }
         }
         sendSocket.close();

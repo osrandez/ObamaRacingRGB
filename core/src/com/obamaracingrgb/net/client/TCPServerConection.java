@@ -40,7 +40,6 @@ public class TCPServerConection extends Thread{
             System.out.println("Flushiamos name");
 
             pos = Integer.parseInt(in.readLine());
-            int contador = 0;
             System.out.println("Nuestra pos es "+pos);
 
             AtomicBoolean racismo = new AtomicBoolean(true);
@@ -50,13 +49,17 @@ public class TCPServerConection extends Thread{
 
             // Recibimos rPort
             int rPort = Integer.parseInt(in.readLine());
+            System.out.println("RPort: "+rPort);
 
             // Mandamos lPort
             out.write(lPort+"\r\n");
             out.flush();
+            System.out.println("LPort: "+lPort);
 
             udpOut = new UDPClientSenderThread(conection.getInetAddress(), rPort, actual, pos, racismo);
+            System.out.println("UDPOut");
 
+            int contador = 0;
             String line;
             while((line = in.readLine()) != null){
                 System.out.println("Linea: "+line);

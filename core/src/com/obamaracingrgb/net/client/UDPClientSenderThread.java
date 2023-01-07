@@ -21,7 +21,7 @@ public class UDPClientSenderThread extends Thread {
         try {
             sendSocket = new DatagramSocket();
         } catch (SocketException e) {
-            throw new RuntimeException(e);
+            System.out.println("crear el sok");
         }
     }
 
