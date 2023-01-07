@@ -35,7 +35,7 @@ public class ServerThread extends Thread{
         this.canser = canser;
 
         try {
-            this.sSok.setSoTimeout(10000);
+            this.sSok.setSoTimeout(1000);
             udpIn = new UDPReceiveThread(players, racismo);
         }catch (SocketException e){}
     }

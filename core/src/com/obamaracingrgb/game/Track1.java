@@ -31,6 +31,7 @@ import com.obamaracingrgb.dominio.CollisionListener;
 import com.obamaracingrgb.dominio.GhostObject;
 import com.obamaracingrgb.dominio.MapObject;
 import com.obamaracingrgb.dominio.Player;
+import com.obamaracingrgb.gui.RaceEndScreen;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -223,7 +224,7 @@ public class Track1 implements Screen {
         batch.end();
 
         if (!racismo.get()) {
-            // Oskar construye
+            this.gamu.setScreen(new RaceEndScreen(this.gamu, this.heGanado));
         }
     }
 
