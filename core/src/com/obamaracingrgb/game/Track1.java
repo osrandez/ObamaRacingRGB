@@ -58,6 +58,7 @@ public class Track1 implements Screen {
     ObamaRGBGameClass gamu;
     CollisionListener escuchadorFinal;
     AtomicBoolean racismo;
+    AtomicBoolean heGanado;
     GhostObject meta;
 
     public Track1(ObamaRGBGameClass game, Array<Player> yogadores, Player actual, AtomicBoolean racismoRGB) {
@@ -70,7 +71,8 @@ public class Track1 implements Screen {
 
         this.actualPlayer = actual;
 
-        escuchadorFinal= new CollisionListener(racismo, actualPlayer);
+        heGanado = new AtomicBoolean(false);
+        escuchadorFinal= new CollisionListener(racismo, actualPlayer, heGanado);
 
         suelosVarios= new Array<>();
         mapConstructors = new ArrayMap<>();
@@ -219,6 +221,10 @@ public class Track1 implements Screen {
         batch.begin();
         font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 20, 20);
         batch.end();
+
+        if (!racismo.get()) {
+            // Oskar construye
+        }
     }
 
     @Override

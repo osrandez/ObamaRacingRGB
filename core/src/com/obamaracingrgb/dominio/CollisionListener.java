@@ -7,9 +7,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class CollisionListener extends ContactListener {
-    public CollisionListener(AtomicBoolean racismo, Player actual) {
+    public CollisionListener(AtomicBoolean racismo, Player actual, AtomicBoolean ganado) {
         this.racismo = racismo;
-        heGanado = new AtomicBoolean(false);
+        heGanado = ganado;
         this.actual = actual;
     }
     AtomicBoolean racismo;
@@ -23,10 +23,6 @@ public class CollisionListener extends ContactListener {
                 heGanado.set(true); // Comprobar en todas las maquinas si ha ganao o no
             }
             racismo.set(false); // Cerrar puertos
-
-            // Ir a final
-            // todo oskar el puto lo hace
-
             return true;
     }
 }
