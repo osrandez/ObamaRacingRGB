@@ -18,6 +18,7 @@ public class RaceEndScreen implements Screen {
 
     public RaceEndScreen(ObamaRGBGameClass game, AtomicBoolean ganado){
         this.gamu = game;
+        this.ganado = ganado;
         cam = new OrthographicCamera();
         cam.setToOrtho(false, 1920, 1080);
         view = new StretchViewport(1920, 1080, cam);
