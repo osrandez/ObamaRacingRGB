@@ -3,6 +3,7 @@ package com.obamaracingrgb.net.client;
 import com.badlogic.gdx.utils.Array;
 import com.obamaracingrgb.dominio.Player;
 import com.obamaracingrgb.game.ObamaRGBGameClass;
+import com.obamaracingrgb.game.Track1;
 
 import java.io.*;
 import java.net.Socket;
@@ -76,6 +77,8 @@ public class TCPServerConection extends Thread{
             udpOut.start();
 
             System.out.println(players.get(pos)==actual);
+
+            this.gamu.setScreen(new Track1(this.gamu, players, actual, racismo));
             //consutruimos la lista y sacamos actual
         }
         catch(IOException e){
