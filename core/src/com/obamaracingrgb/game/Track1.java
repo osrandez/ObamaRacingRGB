@@ -33,6 +33,7 @@ import com.badlogic.gdx.utils.ArrayMap;
 import com.obamaracingrgb.dominio.CollisionListener;
 import com.obamaracingrgb.dominio.MapObject;
 import com.obamaracingrgb.dominio.Player;
+import cosasFeas.PruebasSucias;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -88,7 +89,6 @@ public class Track1 implements Screen {
     }
 
     private void loadModels() {
-
         ModelBuilder mb = new ModelBuilder();
         mb.begin();
         mb.node().id = "ground";
@@ -113,8 +113,6 @@ public class Track1 implements Screen {
     }
 
     private void loadConstructors() {
-        mapConstructors = new ArrayMap<>();
-
         mapConstructors.put("sueloCuadrado", new MapObject.Constructor(model, "ground", new btBoxShape(new Vector3(200f, 0.1f, 200f))));
         mapConstructors.put("sphere", new MapObject.Constructor(model, "sphere", new btSphereShape(0.5f)));
         mapConstructors.put("box", new MapObject.Constructor(model, "box", new btBoxShape(new Vector3(0.5f, 0.5f, 0.5f))));
@@ -155,6 +153,7 @@ public class Track1 implements Screen {
 
     private void buildLevel(){
         MapObject object = mapConstructors.get("sueloCuadrado").construct();
+
         suelosVarios.add(object);
         dynamicsWorld.addRigidBody(object.body);
 
@@ -162,9 +161,11 @@ public class Track1 implements Screen {
         actualPlayer.transform.trn(MathUtils.random(-2.5f, 2.5f), 9f, MathUtils.random(-2.5f, 2.5f));
         actualPlayer.body.proceedToTransform(actualPlayer.transform);
 
+
         for (int i=0; i<players.size; i++) {
             dynamicsWorld.addRigidBody(players.get(i).body);
         }
+
     }
 
     @Override
@@ -174,16 +175,7 @@ public class Track1 implements Screen {
 
     @Override
     public void render(final float delta) {
-        // Movemos cam
-        Vector3 spd = actualPlayer.body.getLinearVelocity().cpy();
-        Vector3 pos = actualPlayer.body.getWorldTransform().getTranslation(new Vector3()).cpy();
-        Vector3 camPos = pos.cpy();
-        camPos.mulAdd(new Vector3(0,1,0),4);
-        camPos.mulAdd(spd.cpy().set(spd.x,0,spd.z), -0.25f);
-
-
-        cam.direction.set(pos.mulAdd(spd,2).sub(camPos)).nor();
-        cam.position.set(camPos);
+        camController.update();
         cam.update();
 
         // Updateamos luz
@@ -191,22 +183,25 @@ public class Track1 implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
         // Updatear aki fisicas
-        Vector3 impulse = new Vector3();
-        impulse.mulAdd(spd.nor(),delta*actualPlayer.accelFactor());
+        Vector3 impulse = new Vector3(1,0,0);
+        impulse = new Vector3().mulAdd(impulse,3*delta*actualPlayer.accelFactor());
 
         if (Gdx.input.isKeyPressed(Input.Keys.UP))
             actualPlayer.body.applyCentralImpulse(impulse);
-        //if (Gdx.input.isKeyPressed(Input.Keys.DOWN))
-        //    actualPlayer.body.applyCentralImpulse(impulse.cpy().rotate(new Vector3(0,1,0),180));
+        if (Gdx.input.isKeyPressed(Input.Keys.DOWN))
+            actualPlayer.body.applyCentralImpulse(impulse.cpy().rotate(new Vector3(0,1,0),180));
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT))
-            actualPlayer.body.setLinearVelocity(actualPlayer.body.getLinearVelocity().rotate(new Vector3(0,1,0),delta*0.5f));
+            actualPlayer.body.applyCentralImpulse(impulse.cpy().rotate(new Vector3(0,1,0),90));
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT))
-            actualPlayer.body.setLinearVelocity(actualPlayer.body.getLinearVelocity().rotate(new Vector3(0,1,0),delta*(-0.5f)));
+            actualPlayer.body.applyCentralImpulse(impulse.cpy().rotate(new Vector3(0,1,0),270));
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
             actualPlayer.body.applyCentralImpulse(new Vector3(0,10,0));
         if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
-            actualPlayer.body.setWorldTransform(actualPlayer.body.getWorldTransform().setToTranslation(0,5,0));
-            actualPlayer.body.setLinearVelocity(new Vector3(0,0,0));
+            Vector3 vec3 = new Vector3(0,5,0);
+            for (int i=0; i<players.size; i++) {
+                players.get(i).body.setWorldTransform(actualPlayer.body.getWorldTransform().setToTranslation(vec3.cpy().mulAdd(new Vector3(0,1,0),1)).cpy());
+                players.get(i).body.setLinearVelocity(new Vector3(0,0,0));
+            }
         }
         if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
             Vector3 xd = actualPlayer.body.getLinearVelocity().cpy();

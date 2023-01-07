@@ -41,7 +41,7 @@ public class UDPReceiveThread extends Thread{
                 currentPlayer = PlayerData.deserialize(paketPhoenix.getData());
                 players.get(currentPlayer.index).consumeNetData(currentPlayer);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException("UDP RECIBIR MAL");
             }
         }
         receiveSocket.close();
