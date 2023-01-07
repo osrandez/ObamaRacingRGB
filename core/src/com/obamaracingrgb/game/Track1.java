@@ -46,7 +46,6 @@ public class Track1 implements Screen {
     btDynamicsWorld dynamicsWorld;
 
     PerspectiveCamera cam;
-    CameraInputController camController;
     ModelBatch modelBatch;
     Environment environment;
     btCollisionConfiguration colConfig;
@@ -93,13 +92,17 @@ public class Track1 implements Screen {
     }
 
     private void loadModels() {
+        am = new AssetManager();
+        am.load("suelo.g3db", Model.class);
+        am.finishLoading();
+
         ModelBuilder mb = new ModelBuilder();
         mb.begin();
         mb.node().id = "ground";
         mb.part("ground", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal, new Material(ColorAttribute.createDiffuse(Color.RED)))
                 .box(400f, 0.2f, 400f);
         mb.node().id = "sphere";
-        mb.part("sphere", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal, new Material(ColorAttribute.createDiffuse(Color.GREEN)))
+        mb.part("sphere", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal, new Material(ColorAttribute.createDiffuse(Color.RED)))
                 .sphere(1f, 1f, 1f, 10, 10);
         mb.node().id = "box";
         mb.part("box", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal, new Material(ColorAttribute.createDiffuse(Color.BLUE)))
@@ -113,6 +116,7 @@ public class Track1 implements Screen {
         mb.node().id = "cylinder";
         mb.part("cylinder", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal, new Material(ColorAttribute.createDiffuse(Color.MAGENTA)))
                 .cylinder(1f, 2f, 1f, 10);
+        mb.node("carreta", am.<Model>get("suelo.g3db"));
         model = mb.end();
     }
 
@@ -123,6 +127,7 @@ public class Track1 implements Screen {
         mapConstructors.put("cone", new MapObject.Constructor(model, "cone", new btConeShape(0.5f, 2f)));
         mapConstructors.put("capsule", new MapObject.Constructor(model, "capsule", new btCapsuleShape(.5f, 1f)));
         mapConstructors.put("cylinder", new MapObject.Constructor(model, "cylinder", new btCylinderShape(new Vector3(.5f, 1f, .5f))));
+        mapConstructors.put("carreta", new MapObject.Constructor(model, "carreta", new btBoxShape(new Vector3(200f, 0.4f, 200f))));
     }
 
     private void initThingos() {
@@ -138,13 +143,10 @@ public class Track1 implements Screen {
 
         // Camara y controlador
         cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        cam.position.set(3f, 7f, 10f);
-        cam.lookAt(0, 4f, 0);
+        cam.position.set(actualPlayer.transform.getTranslation(new Vector3()).mulAdd(new Vector3(0,10,-15),1));
+        cam.lookAt(actualPlayer.transform.getTranslation(new Vector3()));
         cam.far = 1000f;
         cam.update();
-
-        camController = new CameraInputController(cam);
-        Gdx.input.setInputProcessor(camController);
 
         // Brea dura de bullet y su dynamicWorld
         colConfig = new btDefaultCollisionConfiguration();
@@ -156,20 +158,21 @@ public class Track1 implements Screen {
     }
 
     private void buildLevel(){
-        MapObject object = mapConstructors.get("sueloCuadrado").construct();
+        MapObject object = mapConstructors.get("carreta").construct();
 
         suelosVarios.add(object);
         dynamicsWorld.addRigidBody(object.body);
 
-        actualPlayer.transform.setFromEulerAngles(MathUtils.random(360f), MathUtils.random(360f), MathUtils.random(360f));
-        actualPlayer.transform.trn(MathUtils.random(-2.5f, 2.5f), 9f, MathUtils.random(-2.5f, 2.5f));
-        actualPlayer.body.proceedToTransform(actualPlayer.transform);
+        object.body.setWorldTransform(object.body.getWorldTransform().rotate(0,1,0,90).setToTranslation(20,0,0));
 
+        actualPlayer.transform.setFromEulerAngles(MathUtils.random(360f), MathUtils.random(360f), MathUtils.random(360f));
+        actualPlayer.transform.trn(MathUtils.random(-2.5f, 2.5f), 5f, MathUtils.random(-2.5f, 2.5f));
+        actualPlayer.transform.trn(0,0,-45);
+        actualPlayer.body.proceedToTransform(actualPlayer.transform);
 
         for (int i=0; i<players.size; i++) {
             dynamicsWorld.addRigidBody(players.get(i).body);
         }
-
     }
 
     @Override
@@ -179,7 +182,8 @@ public class Track1 implements Screen {
 
     @Override
     public void render(final float delta) {
-        camController.update();
+        //camController.update();
+        cam.position.set(actualPlayer.transform.getTranslation(new Vector3()).mulAdd(new Vector3(0,13,-15),1));
         cam.update();
 
         // Updateamos luz
@@ -187,7 +191,7 @@ public class Track1 implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
         // Updatear aki fisicas
-        Vector3 impulse = new Vector3(1,0,0);
+        Vector3 impulse = new Vector3(1,0,0).rotate(-90,0,1,0);
         impulse = new Vector3().mulAdd(impulse,3*delta*actualPlayer.accelFactor());
 
         if (Gdx.input.isKeyPressed(Input.Keys.UP))
@@ -201,7 +205,7 @@ public class Track1 implements Screen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
             actualPlayer.body.applyCentralImpulse(new Vector3(0,10,0));
         if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
-            actualPlayer.body.setWorldTransform(actualPlayer.body.getWorldTransform().setToTranslation(0,5,0));
+            actualPlayer.body.setWorldTransform(actualPlayer.body.getWorldTransform().setToTranslation(0,5,-45));
             actualPlayer.body.setLinearVelocity(new Vector3(0,0,0));
         }
         if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {

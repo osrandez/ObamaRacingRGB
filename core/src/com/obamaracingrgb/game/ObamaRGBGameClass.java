@@ -65,7 +65,7 @@ public class ObamaRGBGameClass extends Game {
         am.load("playerModel/obamaPrisme/obama_prisme.g3db", Model.class);
         am.load("playerModel/marianoCuboid/mariano_cuboid.g3db", Model.class);
         am.load("playerModel/poliedroSanchez/poliedro_sanchez.g3db", Model.class);
-        am.finishLoading(); // No queremos multithread, cargamos todo al iniciar
+        am.finishLoading(); // No queremos multithread, cargamos al iniciar
 
         ModelBuilder mb = new ModelBuilder();
         mb.begin();
@@ -80,7 +80,7 @@ public class ObamaRGBGameClass extends Game {
         res.put("obama", new Player.Constructor(model, "obama", new btSphereShape(0.5f),1f));
         res.put("cuboy", new Player.Constructor(model, "cuboy", new btSphereShape(0.5f),1f));
         res.put("sanchez", new Player.Constructor(model, "sanchez", new btSphereShape(0.5f),1f));
-        res.put("nekoArc", new Player.Constructor(model, "nekoArc", new btSphereShape(0.5f),0.5f));
+        //res.put("nekoArc", new Player.Constructor(model, "nekoArc", new btSphereShape(0.5f),0.5f));
         return res;
     }
 }

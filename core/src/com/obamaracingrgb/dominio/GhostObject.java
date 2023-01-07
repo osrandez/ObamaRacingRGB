@@ -18,7 +18,7 @@ public class GhostObject extends ModelInstance implements Disposable {
         body= new btGhostObject();
         body.setCollisionFlags(body.getCollisionFlags() | btCollisionObject.CollisionFlags.CF_NO_CONTACT_RESPONSE);
         body.setCollisionShape(shape);
-        body.setWorldTransform(new Matrix4().setToTranslation(10,2,10));
+        body.setWorldTransform(new Matrix4().setToTranslation(20,2,0));
         transform.set(body.getWorldTransform());
         body.setContactCallbackFlag(BulletFlags.GHOST);
         body.setContactCallbackFilter(0);
@@ -30,7 +30,7 @@ public class GhostObject extends ModelInstance implements Disposable {
         body= new btGhostObject();
         body.setCollisionFlags(body.getCollisionFlags() | btCollisionObject.CollisionFlags.CF_NO_CONTACT_RESPONSE);
         body.setCollisionShape(shape);
-        body.setWorldTransform(new Matrix4().setToTranslation(10,2,10));
+        body.setWorldTransform(new Matrix4().setToTranslation(0,2,40));
         transform.set(body.getWorldTransform());
         body.setContactCallbackFlag(BulletFlags.GHOST);
         body.setContactCallbackFilter(0);
