@@ -32,7 +32,7 @@ public class RaceEndScreen implements Screen {
     public void render(float delta) {
 
         this.gamu.sBatch.begin();
-            this.gamu.font.draw(this.gamu.sBatch, this.ganado.get()? "true":"!true", 500, 500);
+            this.gamu.font.draw(this.gamu.sBatch, this.ganado.get()? "Ganaste":"Perdiste", 500, 500);
             //this.gamu.font.draw(this.gamu.sBatch, "tu madre la negra", 500, 500);
         this.gamu.sBatch.end();
 

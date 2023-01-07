@@ -1,3 +1,8 @@
+/*
+* Primer test de fisicas
+* Lo dejamos auqi como referencia
+* */
+
 package cosasFeas;
 
 import com.badlogic.gdx.Game;

@@ -1,3 +1,8 @@
+/*
+* Copia de seguridad de la clase
+* Este archivo no se usa
+* */
+
 package cosasFeas;
 
 import com.badlogic.gdx.ApplicationAdapter;

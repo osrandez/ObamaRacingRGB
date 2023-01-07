@@ -65,7 +65,6 @@ public class ObamaRGBGameClass extends Game {
         am.load("playerModel/obamaPrisme/obama_prisme.g3db", Model.class);
         am.load("playerModel/marianoCuboid/mariano_cuboid.g3db", Model.class);
         am.load("playerModel/poliedroSanchez/poliedro_sanchez.g3db", Model.class);
-        am.load("cancer.g3db", Model.class);
         am.finishLoading(); // No queremos multithread, cargamos todo al iniciar
 
         ModelBuilder mb = new ModelBuilder();
@@ -73,7 +72,6 @@ public class ObamaRGBGameClass extends Game {
         mb.node("obama", am.<Model>get("playerModel/obamaPrisme/obama_prisme.g3db"));
         mb.node("cuboy", am.<Model>get("playerModel/marianoCuboid/mariano_cuboid.g3db"));
         mb.node("sanchez", am.<Model>get("playerModel/poliedroSanchez/poliedro_sanchez.g3db"));
-        mb.node("nekoArc", am.<Model>get("cancer.g3db"));
         //am.dispose();
         return mb.end();
     }
