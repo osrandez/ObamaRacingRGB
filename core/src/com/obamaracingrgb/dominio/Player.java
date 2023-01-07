@@ -35,7 +35,7 @@ public class Player extends ModelInstance implements Disposable {
         body.setMotionState(motionState);
         body.setCollisionFlags(body.getCollisionFlags() | btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK);
         body.setContactCallbackFlag(BulletFlags.OBJECT);
-        body.setContactCallbackFilter(BulletFlags.GHOST);
+        body.setContactCallbackFilter(0);
     } // Para meshes
 
     public float accelFactor() {

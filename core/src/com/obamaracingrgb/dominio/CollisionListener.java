@@ -21,8 +21,9 @@ public class CollisionListener extends ContactListener {
                                   int userValue1, int partId1, int index1) {
             if (userValue0 == actual.body.getUserValue() || userValue1 == actual.body.getUserValue()) {
                 heGanado.set(true); // Comprobar en todas las maquinas si ha ganao o no
+                racismo.set(false); // Cerrar puertos
             }
-            racismo.set(false); // Cerrar puertos
+
             return true;
     }
 }
