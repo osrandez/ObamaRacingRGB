@@ -32,16 +32,21 @@ public class UDPReceiveThread extends Thread{
 
     @Override
     public void run() {
+        System.out.println("UDPThread Runniando");
+        System.out.println("--- Puerto: " + receiveSocket.getLocalPort() + "  IP: " + receiveSocket.getLocalAddress().getHostAddress());
         byte[] paketStreamix = new byte[1500];
         DatagramPacket paketPhoenix = new DatagramPacket(paketStreamix, 1500);    //lo siento mucho // yo no
         PlayerData currentPlayer;
         while(racismo.get()){
             try {
+                System.out.println("UDP Intenta resivir");
                 receiveSocket.receive(paketPhoenix);
+                System.out.println(PlayerData.deserialize(paketPhoenix.getData()));
                 currentPlayer = PlayerData.deserialize(paketPhoenix.getData());
                 players.get(currentPlayer.index).consumeNetData(currentPlayer);
             } catch (IOException e) {
-                System.out.println("no resibe");
+                System.out.println("No resive");
+                //throw new RuntimeException("UDP RECIBIR MAL");
             }
         }
         receiveSocket.close();

@@ -46,7 +46,7 @@ public class ServerThread extends Thread{
                 if(this.isInterrupted()){
                     con.close();
                 }else{
-                    new TCPThread(con, players, gamu, comiensa, udpRAddresses).start();
+                    new TCPThread(con, players, gamu, comiensa, udpRAddresses, udpIn.lPort).start();
                 }
             } catch (IOException e) {
                 //throw new RuntimeException(e);
@@ -66,6 +66,8 @@ public class ServerThread extends Thread{
 
         udpIn.start();
         udpOut.start();
+
+        System.out.println("Puerto del susio de Raul: "+ udpRAddresses.getValueAt(0));
 
         try{
             sSok.close();

@@ -20,12 +20,13 @@ public class TCPThread extends Thread{
     public int udpLPort;
     public int udpRPort;
 
-    public  TCPThread(Socket conection, Array<Player> players, ObamaRGBGameClass game, CountDownLatch comiensa, ArrayMap<InetAddress, Integer> addrs){
+    public  TCPThread(Socket conection, Array<Player> players, ObamaRGBGameClass game, CountDownLatch comiensa, ArrayMap<InetAddress, Integer> addrs, int lPort){
         this.conection = conection;
         this.players = players;
         this.gamu = game;
         this.comiensa = comiensa;
         this.udpRAddresses = addrs;
+        this.udpLPort = lPort;
     }
 
     @Override
