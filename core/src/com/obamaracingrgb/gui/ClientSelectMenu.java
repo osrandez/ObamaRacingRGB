@@ -62,7 +62,7 @@ public class ClientSelectMenu implements Screen {
         cam = new OrthographicCamera();
         cam.setToOrtho(false, 1920, 1080);
 
-        view = new StretchViewport(1920, 1080);
+        view = new StretchViewport(1920, 1080, cam);
 
         stage = new Stage(new StretchViewport(1920, 1080));
         Gdx.input.setInputProcessor(stage);

@@ -62,10 +62,8 @@ public class Track1 implements Screen {
 
     public Track1(ObamaRGBGameClass game, Array<Player> yogadores, Player actual, AtomicBoolean racismoRGB) {
         gamu=game;
-        if (yogadores!=null)
-            this.players = yogadores;
-        else
-            this.players = new Array<>();
+        this.players = yogadores;
+
         racismo = racismoRGB;
 
 
@@ -85,7 +83,12 @@ public class Track1 implements Screen {
         loadConstructors();
         buildLevel();
         meta = new GhostObject(model, "sphere", new btSphereShape(0.5f));
+        meta.body.setUserValue(-1);
         dynamicsWorld.addCollisionObject(meta.body);
+
+        for (int i=0; i<players.size;i++) {
+            players.get(i).body.setUserValue(i);
+        }
     }
 
     private void loadModels() {
