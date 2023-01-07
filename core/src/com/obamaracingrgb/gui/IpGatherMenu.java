@@ -1,34 +1,36 @@
-package com.obamaracingrgb.game;
+package com.obamaracingrgb.gui;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.obamaracingrgb.dominio.Player;
-import com.obamaracingrgb.net.server.ServerThread;
-import com.sun.org.apache.xpath.internal.operations.Bool;
+import com.obamaracingrgb.game.ObamaRGBGameClass;
 
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.net.Socket;
 
-public class HostSelectMenu implements Screen {
+public class IpGatherMenu implements Screen {
     private final ObamaRGBGameClass gamu;
 
-    OrthographicCamera cam;
-
     private Stage stage;
+
+    private OrthographicCamera cam;
+
+    private TextField testoIP;
+    private TextField testoPort;
+    private BitmapFont fuentesita;
 
     private Texture btSalirImg;
     private Texture btJugarImg;
@@ -36,43 +38,42 @@ public class HostSelectMenu implements Screen {
     private ImageButton buttonSalir;
     private ImageButton buttonJugar;
 
-    private ServerSocket sSok;
-    private int port;
-
     private Viewport view;
 
-    private Array<Player> yogadores;
-
-    private Player actual;
-
-    private Thread aceptarConexiones;
-    private AtomicBoolean racismo;
-
-    public HostSelectMenu(ObamaRGBGameClass game, final ServerSocket sSok, String modelName){
-        this.sSok = sSok;
+    public IpGatherMenu(ObamaRGBGameClass game){
         this.gamu = game;
 
-
-
-        actual = gamu.pConstructors.get(modelName).construct();
-
-        yogadores = new Array<>();
-
-        yogadores.add(actual);
-
-        racismo = new AtomicBoolean(true);
-        aceptarConexiones = new ServerThread(sSok, yogadores, this.gamu, racismo);
-        aceptarConexiones.start();
-
-        port = sSok.getLocalPort();
-
-        cam = new OrthographicCamera(1920, 1080);
+        cam = new OrthographicCamera();
         cam.setToOrtho(false, 1920, 1080);
 
         view = new StretchViewport(1920, 1080, cam);
 
         stage = new Stage(new StretchViewport(1920, 1080));
         Gdx.input.setInputProcessor(stage);
+
+        fuentesita = new BitmapFont();
+        fuentesita.getData().setScale(3, 3);
+
+        TextField.TextFieldStyle joquin = new TextField.TextFieldStyle();
+        joquin.fontColor = Color.GOLD;
+        joquin.font = fuentesita;
+        joquin.cursor = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("spriteAssets/cursor.png"))));
+        joquin.selection = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("spriteAssets/selection.png"))));
+        joquin.background = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("spriteAssets/text.png"))));
+
+        testoIP = new TextField("Server IP", joquin);
+        testoIP.setX(752 - 300);
+        testoIP.setY(540);
+        testoIP.setHeight(70);
+        testoIP.setWidth(415);
+        testoIP.setAlignment(1);
+
+        testoPort = new TextField("Server port", joquin);
+        testoPort.setX(752 + 300);
+        testoPort.setY(540);
+        testoPort.setHeight(70);
+        testoPort.setWidth(415);
+        testoPort.setAlignment(1);
 
         btSalirImg = new Texture(Gdx.files.internal("spriteAssets/Salir.png"));
         btJugarImg = new Texture(Gdx.files.internal("spriteAssets/jugar.png"));
@@ -82,17 +83,12 @@ public class HostSelectMenu implements Screen {
         buttonSalir.setY(-20);
 
         buttonJugar = new ImageButton(new TextureRegionDrawable(new TextureRegion(btJugarImg)));
-        buttonSalir.setX(1920/4 - btSalirImg.getWidth()/2 + 1920/2);
-        buttonSalir.setY(-20);
+        buttonJugar.setX(1920/4 - btSalirImg.getWidth()/2 + 1920/2);
+        buttonJugar.setY(-20);
 
         buttonSalir.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                try {
-                    sSok.close();
-                } catch (IOException e) {
-                    System.out.println("cerramos mal xd");
-                }
                 gamu.setScreen(new MainMenu(gamu));
             }
         });
@@ -100,17 +96,23 @@ public class HostSelectMenu implements Screen {
         buttonJugar.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                System.out.println("Momento juegos 88");
-                aceptarConexiones.interrupt();
-                Track1 tJuan = new Track1(gamu, yogadores, actual, racismo);
-                gamu.setScreen(tJuan);
+                try{
+                    Socket conection = new Socket(testoIP.getText(), Integer.parseInt(testoPort.getText()));
+                    gamu.setScreen(new PlayerSelectionScreen(gamu, conection));
+                } catch (Exception e) {     //ponemo exception porque no me importa que falle, hacemo lo mismo
+                    gamu.setScreen(new MainMenu(gamu));
+                }
+                //System.out.println("IP: " + testoIP.getText());
+                //System.out.println("Puerto: " + testoPort.getText());
             }
         });
 
+
+        stage.addActor(testoIP);
+        stage.addActor(testoPort);
         stage.addActor(buttonSalir);
         stage.addActor(buttonJugar);
     }
-
     @Override
     public void show() {
 
@@ -121,10 +123,6 @@ public class HostSelectMenu implements Screen {
         ScreenUtils.clear(0, 0, 0.2f, 1);
 
         cam.update();
-
-        gamu.sBatch.begin();
-            gamu.font.draw(gamu.sBatch, "Port: " + this.port, gamu.izquierda + 850, gamu.abajo + 1030);
-        gamu.sBatch.end();
 
         stage.draw();
 
@@ -155,6 +153,7 @@ public class HostSelectMenu implements Screen {
 
     @Override
     public void dispose() {
-
+        stage.dispose();
+        fuentesita.dispose();
     }
 }

@@ -3,17 +3,15 @@ package com.obamaracingrgb.game;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
-import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.physics.bullet.Bullet;
 import com.badlogic.gdx.physics.bullet.collision.btSphereShape;
 import com.badlogic.gdx.utils.ArrayMap;
-import com.badlogic.gdx.utils.Disposable;
+import com.obamaracingrgb.gui.MainMenu;
 import com.obamaracingrgb.dominio.Player;
 
 public class ObamaRGBGameClass extends Game {
@@ -39,8 +37,8 @@ public class ObamaRGBGameClass extends Game {
         playerModels = loadPlayerModels();
         pConstructors = loadPlayerConstructors(playerModels);
 
-        //Gdx.graphics.setWindowedMode(1080, 720);
-        Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+        Gdx.graphics.setWindowedMode(1080, 720);
+        //Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
 
         this.setScreen(new MainMenu(this));
     }

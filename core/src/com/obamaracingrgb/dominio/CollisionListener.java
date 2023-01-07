@@ -19,12 +19,15 @@ public class CollisionListener extends ContactListener {
     @Override
     public boolean onContactAdded(btCollisionObject colObj0, int partId0, int index0, boolean match0,
             btCollisionObject colObj1, int partId1, int index1, boolean match1) {
-        if (colObj0.checkCollideWith(actual.body) || colObj1.checkCollideWith(actual.body))
+        if (colObj0.checkCollideWith(actual.body) || colObj1.checkCollideWith(actual.body)){
             heGanado.set(true);
+            actual.body.setWorldTransform(actual.body.getWorldTransform().setToTranslation(0,-10,0));
+        }
         racismo.set(false);
 
         // Ir a final
         // todo oskar el puto lo hace
+
 
         return true;
     }

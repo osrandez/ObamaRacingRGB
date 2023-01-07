@@ -34,8 +34,8 @@ public class UDPReceiveThread extends Thread{
     public void run() {
         System.out.println("UDPThread Runniando");
         System.out.println("--- Puerto: " + receiveSocket.getLocalPort() + "  IP: " + receiveSocket.getLocalAddress().getHostAddress());
-        byte[] paketStreamix = new byte[1500];
-        DatagramPacket paketPhoenix = new DatagramPacket(paketStreamix, 1500);    //lo siento mucho // yo no
+        byte[] paketStreamix = new byte[100];
+        DatagramPacket paketPhoenix = new DatagramPacket(paketStreamix,0, 100);    //lo siento mucho // yo no
         PlayerData currentPlayer;
         while(racismo.get()){
             try {

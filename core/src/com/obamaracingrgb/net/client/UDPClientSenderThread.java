@@ -27,8 +27,8 @@ public class UDPClientSenderThread extends Thread {
 
     @Override
     public void run() {
-        byte[] packetStreamix = new byte[1500];
-        DatagramPacket packetPhoenix = new DatagramPacket(packetStreamix,0);
+        byte[] packetStreamix = new byte[100];
+        DatagramPacket packetPhoenix = new DatagramPacket(packetStreamix,0,100);
         packetPhoenix.setAddress(rAddress);
         packetPhoenix.setPort(rPort);
         while (racismo.get()) {

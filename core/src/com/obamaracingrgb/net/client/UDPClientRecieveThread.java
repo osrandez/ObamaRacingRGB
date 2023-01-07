@@ -31,8 +31,8 @@ public class UDPClientRecieveThread extends Thread{
 
     @Override
     public void run() {
-        byte[] paketStreamix = new byte[1500];
-        DatagramPacket paketPhoenix = new DatagramPacket(paketStreamix,0);
+        byte[] paketStreamix = new byte[100];
+        DatagramPacket paketPhoenix = new DatagramPacket(paketStreamix,0,100);
         while(racismo.get()){
             try {
                 recieveSocket.receive(paketPhoenix);

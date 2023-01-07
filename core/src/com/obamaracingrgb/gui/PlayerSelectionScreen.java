@@ -1,4 +1,4 @@
-package com.obamaracingrgb.game;
+package com.obamaracingrgb.gui;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -16,7 +16,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
-import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.obamaracingrgb.dominio.Player;
@@ -25,9 +24,6 @@ import com.obamaracingrgb.game.ObamaRGBGameClass;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class PlayerSelectionScreen implements Screen {
     private ObamaRGBGameClass gamu;

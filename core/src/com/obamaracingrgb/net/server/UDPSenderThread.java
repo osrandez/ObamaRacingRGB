@@ -29,8 +29,8 @@ public class UDPSenderThread extends Thread{
     public void run() {
         int size = players.size;
         int cSize = clientes.size;
-        byte[] paketStreamix = new byte[1500];
-        DatagramPacket paketPhoenix = new DatagramPacket(paketStreamix,1500);
+        byte[] paketStreamix = new byte[100];
+        DatagramPacket paketPhoenix = new DatagramPacket(paketStreamix,0,100);
         while (racismo.get()) {
             try {
                 for (int player=0; player<size; player++) { // Recorremos players

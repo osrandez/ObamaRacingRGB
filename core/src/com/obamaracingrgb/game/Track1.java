@@ -1,7 +1,5 @@
 package com.obamaracingrgb.game;
 
-import bulletUtils.BulletFlags;
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -21,7 +19,6 @@ import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.*;
 import com.badlogic.gdx.physics.bullet.dynamics.btConstraintSolver;
@@ -31,9 +28,9 @@ import com.badlogic.gdx.physics.bullet.dynamics.btSequentialImpulseConstraintSol
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.obamaracingrgb.dominio.CollisionListener;
+import com.obamaracingrgb.dominio.GhostObject;
 import com.obamaracingrgb.dominio.MapObject;
 import com.obamaracingrgb.dominio.Player;
-import cosasFeas.PruebasSucias;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -61,6 +58,7 @@ public class Track1 implements Screen {
     ObamaRGBGameClass gamu;
     CollisionListener escuchadorFinal;
     AtomicBoolean racismo;
+    GhostObject meta;
 
     public Track1(ObamaRGBGameClass game, Array<Player> yogadores, Player actual, AtomicBoolean racismoRGB) {
         gamu=game;
@@ -86,6 +84,8 @@ public class Track1 implements Screen {
         loadModels();
         loadConstructors();
         buildLevel();
+        meta = new GhostObject(model, "sphere", new btSphereShape(0.5f));
+        dynamicsWorld.addCollisionObject(meta.body);
     }
 
     private void loadModels() {
@@ -197,11 +197,8 @@ public class Track1 implements Screen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
             actualPlayer.body.applyCentralImpulse(new Vector3(0,10,0));
         if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
-            Vector3 vec3 = new Vector3(0,5,0);
-            for (int i=0; i<players.size; i++) {
-                players.get(i).body.setWorldTransform(actualPlayer.body.getWorldTransform().setToTranslation(vec3.cpy().mulAdd(new Vector3(0,1,0),1)).cpy());
-                players.get(i).body.setLinearVelocity(new Vector3(0,0,0));
-            }
+            actualPlayer.body.setWorldTransform(actualPlayer.body.getWorldTransform().setToTranslation(0,5,0));
+            actualPlayer.body.setLinearVelocity(new Vector3(0,0,0));
         }
         if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
             Vector3 xd = actualPlayer.body.getLinearVelocity().cpy();
@@ -213,6 +210,7 @@ public class Track1 implements Screen {
         modelBatch.begin(cam);
         modelBatch.render(suelosVarios, environment);
         modelBatch.render(players, environment);
+        modelBatch.render(meta, environment);
         modelBatch.end();
 
         batch.begin();

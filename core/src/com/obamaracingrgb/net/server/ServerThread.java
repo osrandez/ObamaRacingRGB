@@ -64,10 +64,13 @@ public class ServerThread extends Thread{
 
         udpOut = new UDPSenderThread(players, udpRAddresses, racismo);
 
+        udpIn.setDaemon(true);
+        udpIn.setDaemon(false);
+
         udpIn.start();
         udpOut.start();
 
-        System.out.println("Puerto del susio de Raul: "+ udpRAddresses.getValueAt(0));
+        System.out.println("rPort: "+ udpRAddresses.getValueAt(0));
 
         try{
             sSok.close();
