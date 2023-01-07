@@ -1,0 +1,106 @@
+Documentaçao ofisial de ORRGB
+
+Estructura de los paquetes:
+  - bulletUtils: clases que nos ayuden a utilizar cosas de las que tengamos que acordarnos
+  - com.obamaracingrgb: las cosas del juego
+    - dominio: objetos que representan cosas
+      + CollisionListener: callback del motor Bullet a HABA
+      + GhostObject: instancia de un objeto atravesable (y que detecta colisiones)
+      + MapObject: instancia de un objeto kinematico
+      + Player: instancia de un jugador
+      + MotionState: clase con callbacks de Bullet para actualizar posicion
+    - game: clases que hacen cosas
+      + ObamaRGBGameClass: punto de entrada a la API de LibGDX
+      + Track1: circuito 1 xd jaja salu2
+    - gui: clases de interfaces de usuario
+      + ClientSelectMenu
+      + HostSelectMenu
+      + IpGatherMenu
+      + PlayerSelectionScreen
+      + RaceEndScreen
+    - net: breas obtusas de netcode e hilos
+      - client: clases de cliente
+        + TCPServerConection: hilo TCP
+        + UDPClientRecieveThread: hilo UDP entrada
+        + UDPClientSenderThread: hilo UDP salida
+      - server:
+        + ServerThread: solo necesario en servidor para varios hilos TCP
+        + TCPThread
+        + UDPreceiveThread: compartido para todos clientes
+        + UDPSenderThread: compartido para todos clientes
+      - utils:
+        + PlayerData: clase que serializa datos de jugadores
+  - los otros paquetes te la soplan tres pingos
+  
+Protocolos Cliente-Servidor:
+  TCP:
+    - Cliente conecta server
+    - Cliente manda nombre
+    - Servidor manda indice (o numero) de jugador
+    - Servidor manda puerto UDP local
+    - Cliente manda puerto UDP local
+    - Servidor manda lista jugadores
+    - Se abren los UDP y se cierra el TCP
+    
+  UDP:
+    - El cliente envia un string "n|a,b,c|x,y,z|fin"
+    - N es el num de jugador, abc es el vector posicion y xyz es el vector velocidad
+    - El servidor se encarga de distribuir los datos de todos los jugadores a cada cliente
+
+Observaciones:
+  - Pasamos el objeto de la clase principal porque compartimos el uso de SUSඞ batchs
+  - Mediante el metodo "setScreen(? implements Screen);" podemos sobreescribir la funcion render de esta clase
+  - Menos el juego como tal, el resto de pantallas deberian adecuarse a la resolucion
+  - Todas las excepciones lanzadas son intencionales
+  - Es necesario jugar con eurobeat de fondo
+  - Nos preguntas el lunes si eso xd
+
+//                                           *#%%%##/********,.
+//                                          ,*(%%%%%%%%%%%%%%#(,
+//                                         /((#%%#/**#%%%%%%#*,.
+//                                     **//*/#%(//*#%%#(//#%(*,.
+//                                   .*(#%%#%//**//*#%#%%/**#%#(,
+//                                   /#%#(**,*//*(%&%/***//*(#(,
+//                               .,*//*///**,////*//**//*,/*#%#**.
+//                            .//*//////////////*////*.**/(%%#(,/*
+//                           /*///**//*//*//////*//////*/*,/*/**,.
+//                         ,*/*,/*////*////*//////*//////*//////*
+//                        ,////**//////////*////*////////////,*//*
+//                        */*/*//*(#, *,.*////////*//*/*////***///*..
+//                         ///*//*((@&&@&%(&@&&&#*,**/////////**/*/,.
+//                          .///*(#&&# (%##*%&@@&%*&,*/////////////,
+//                            ,/..#&%.,&#&,*@&@@&#/%**/*///////////..
+//                          .**...(%*.,,((.#@&@@%/%/*////////////,..
+//                        .,.  . /&%%%%#.%@&@&@#(&/*/////,,,,.....
+//       .#%*                  .%%%%%&%*%&%/((%&/*//////*...
+//       . *##.              *(#&%%%%&((&@&((#&%(..,,*****..              .,(/.
+//       /##((&%.            %(#%%&%%&( ..,./#(/%%#, ..... ..             /#,*/
+//        .*.,#%&.            .%&%&%%&(.*,...... ,((&*                . ,%#(((*
+//        (/.((#&.             .#%&%%(.,,,,,,**(%&&&&/                 /&#,./..
+//         ,.*(#(.******,,...         .,/((*...  ......          .... *&#((/((.
+//              .*********/*****/**,,. ,*,..**.  ...    ...,,,********#&#(/.#.
+//                               ......,**********/*******************,...
+//                                    #%%#***.
+//                                  *#####***
+//                                 %%*/%#%(*,
+//                               .#*(#,/%#**,.
+//                               .***/**(****..
+//                               ,***********. .
+//                              .********/***,
+//                               ********/****.
+//                               .*******/***,
+//                               . ,*****/**.
+//                                   .,**,,.
+//                                    ,,**,,.
+//                                     *,**,.
+//                          .          .,,*,,.
+//                                     .*,**,,
+//                             .        ,*,**,,
+//                          ..,,..... .. ,***/***.,,.,&(
+//                       ,,,,,. *(.*.  ,**,*/,,. ,###&/ ...
+//        ██╗░░██╗██████╗░░█████╗░██╗░░██╗░█████╗░████████╗░█████╗░░█████╗░
+//        ██║░██╔╝██╔══██╗██╔══██╗██║░██╔╝██╔══██╗╚══██╔══╝██╔══██╗██╔══██╗
+//        █████═╝░██████╔╝███████║█████═╝░███████║░░░██║░░░██║░░██║███████║
+//        ██╔═██╗░██╔══██╗██╔══██║██╔═██╗░██╔══██║░░░██║░░░██║░░██║██╔══██║
+//        ██║░╚██╗██║░░██║██║░░██║██║░╚██╗██║░░██║░░░██║░░░╚█████╔╝██║░░██║
+//        ╚═╝░░╚═╝╚═╝░░╚═╝╚═╝░░╚═╝╚═╝░░╚═╝╚═╝░░╚═╝░░░╚═╝░░░░╚════╝░╚═╝░░╚═╝
