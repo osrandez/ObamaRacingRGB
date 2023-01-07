@@ -40,9 +40,12 @@ public class UDPSenderThread extends Thread{
                         paketPhoenix.setPort(clientes.getValueAt(client));
                         sendSocket.send(paketPhoenix);
                     }
+                    Thread.sleep(50);
                 }
             } catch (IOException e) {
                 //throw new RuntimeException(e); // JAMAS
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
         }
         sendSocket.close();

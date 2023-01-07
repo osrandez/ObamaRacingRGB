@@ -35,7 +35,7 @@ public class UDPClientSenderThread extends Thread {
             try {
                 packetPhoenix.setData(actual.getNetData(index).serialize());
                 sendSocket.send(packetPhoenix);
-                Thread.sleep(33);
+                Thread.sleep(50);
             } catch (Exception ignored) {}
         }
         sendSocket.close();
