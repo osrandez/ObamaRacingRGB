@@ -65,23 +65,24 @@ public class ObamaRGBGameClass extends Game {
         am.load("playerModel/obamaPrisme/obama_prisme.g3db", Model.class);
         am.load("playerModel/marianoCuboid/mariano_cuboid.g3db", Model.class);
         am.load("playerModel/poliedroSanchez/poliedro_sanchez.g3db", Model.class);
-        while (true)
-            if (am.update()) break; // esperar carga
+        am.load("cancer.g3db", Model.class);
+        am.finishLoading(); // No queremos multithread, cargamos todo al iniciar
 
         ModelBuilder mb = new ModelBuilder();
         mb.begin();
         mb.node("obama", am.<Model>get("playerModel/obamaPrisme/obama_prisme.g3db"));
         mb.node("cuboy", am.<Model>get("playerModel/marianoCuboid/mariano_cuboid.g3db"));
         mb.node("sanchez", am.<Model>get("playerModel/poliedroSanchez/poliedro_sanchez.g3db"));
-        Model m = mb.end();
+        mb.node("nekoArc", am.<Model>get("cancer.g3db"));
         //am.dispose();
-        return m;
+        return mb.end();
     }
     private static ArrayMap<String, Player.Constructor> loadPlayerConstructors(Model model) {
         ArrayMap<String, Player.Constructor> res = new ArrayMap<>();
         res.put("obama", new Player.Constructor(model, "obama", new btSphereShape(0.5f),1f));
         res.put("cuboy", new Player.Constructor(model, "cuboy", new btSphereShape(0.5f),1f));
         res.put("sanchez", new Player.Constructor(model, "sanchez", new btSphereShape(0.5f),1f));
+        res.put("nekoArc", new Player.Constructor(model, "nekoArc", new btSphereShape(0.5f),0.5f));
         return res;
     }
 }
