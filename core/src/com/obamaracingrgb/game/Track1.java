@@ -68,8 +68,6 @@ public class Track1 implements Screen {
 
         racismo = racismoRGB;
 
-
-
         this.actualPlayer = actual;
 
         heGanado = new AtomicBoolean(false);

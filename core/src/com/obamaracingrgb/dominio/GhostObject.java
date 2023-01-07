@@ -21,7 +21,7 @@ public class GhostObject extends ModelInstance implements Disposable {
         body.setWorldTransform(new Matrix4().setToTranslation(10,2,10));
         transform.set(body.getWorldTransform());
         body.setContactCallbackFlag(BulletFlags.GHOST);
-        body.setContactCallbackFilter(BulletFlags.OBJECT);
+        body.setContactCallbackFilter(0);
         this.body.setActivationState(Collision.DISABLE_DEACTIVATION);
     }
 
@@ -33,7 +33,7 @@ public class GhostObject extends ModelInstance implements Disposable {
         body.setWorldTransform(new Matrix4().setToTranslation(10,2,10));
         transform.set(body.getWorldTransform());
         body.setContactCallbackFlag(BulletFlags.GHOST);
-        body.setContactCallbackFilter(BulletFlags.OBJECT);
+        body.setContactCallbackFilter(0);
         this.body.setActivationState(Collision.DISABLE_DEACTIVATION);
     }
 
