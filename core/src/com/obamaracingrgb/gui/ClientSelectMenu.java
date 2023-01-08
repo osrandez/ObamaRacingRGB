@@ -56,7 +56,7 @@ public class ClientSelectMenu implements Screen {
 
         //Que asco de linea xd
         conexionServidor = new TCPServerConection(server, this.gamu, yogadores, actual, iniciar);
-        racismo = conexionServidor.racismo;
+        racismo = conexionServidor.open;
         conexionServidor.start();
 
         cam = new OrthographicCamera();

@@ -57,7 +57,7 @@ public class Track1 implements Screen {
     btConstraintSolver constraintSolver;
     ObamaRGBGameClass gamu;
     CollisionListener escuchadorFinal;
-    AtomicBoolean racismo;
+    AtomicBoolean open;
     AtomicBoolean heGanado;
     GhostObject meta;
 
@@ -65,12 +65,12 @@ public class Track1 implements Screen {
         gamu=game;
         this.players = yogadores;
 
-        racismo = racismoRGB;
+        open = racismoRGB;
 
         this.actualPlayer = actual;
 
         heGanado = new AtomicBoolean(false);
-        escuchadorFinal= new CollisionListener(racismo, actualPlayer, heGanado);
+        escuchadorFinal= new CollisionListener(open, actualPlayer, heGanado);
 
         suelosVarios= new Array<>();
         mapConstructors = new ArrayMap<>();
@@ -225,7 +225,7 @@ public class Track1 implements Screen {
         font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 20, 20);
         batch.end();
 
-        if (!racismo.get()) {
+        if (!open.get()) {
             this.gamu.setScreen(new RaceEndScreen(this.gamu, this.heGanado));
         }
     }

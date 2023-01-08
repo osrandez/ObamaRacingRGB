@@ -14,9 +14,9 @@ public class UDPClientRecieveThread extends Thread{
     private DatagramSocket recieveSocket;
     private int index;
     public int lPort;
-    AtomicBoolean racismo;
+    AtomicBoolean open;
 
-    public UDPClientRecieveThread(Array<Player> players, int index, AtomicBoolean racismo){
+    public UDPClientRecieveThread(Array<Player> players, int index, AtomicBoolean open){
         this.players = players;
         this.index = index;
         try {
@@ -26,14 +26,14 @@ public class UDPClientRecieveThread extends Thread{
             throw new RuntimeException(e);
         }
         lPort = recieveSocket.getLocalPort();
-        this.racismo = racismo;
+        this.open = open;
     }
 
     @Override
     public void run() {
         byte[] paketStreamix = new byte[100];
         DatagramPacket paketPhoenix = new DatagramPacket(paketStreamix,0,100);
-        while(racismo.get()){
+        while(open.get()){
             try {
                 recieveSocket.receive(paketPhoenix);
                 PlayerData pData = PlayerData.deserialize(paketPhoenix.getData());

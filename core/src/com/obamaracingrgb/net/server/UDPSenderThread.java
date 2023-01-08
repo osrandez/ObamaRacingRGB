@@ -12,9 +12,9 @@ public class UDPSenderThread extends Thread{
     private Array<Player> players;
     private DatagramSocket sendSocket;
     private ArrayMap<InetAddress, Integer> clientes;
-    AtomicBoolean racismo;
+    AtomicBoolean open;
 
-    public UDPSenderThread(Array<Player> players, ArrayMap<InetAddress, Integer> rAddressses, AtomicBoolean racismo){
+    public UDPSenderThread(Array<Player> players, ArrayMap<InetAddress, Integer> rAddressses, AtomicBoolean open){
         this.players = players;
         try {
             sendSocket = new DatagramSocket();
@@ -22,7 +22,7 @@ public class UDPSenderThread extends Thread{
             throw new RuntimeException(e);
         }
         clientes = rAddressses;
-        this.racismo=racismo;
+        this.open=open;
     }
 
     @Override
@@ -31,7 +31,7 @@ public class UDPSenderThread extends Thread{
         int cSize = clientes.size;
         byte[] paketStreamix = new byte[100];
         DatagramPacket paketPhoenix = new DatagramPacket(paketStreamix,0,100);
-        while (racismo.get()) {
+        while (open.get()) {
             try {
                 for (int player=0; player<size; player++) { // Recorremos players
                     for (int client=0; client<cSize; client++) { // Recorremos clientes

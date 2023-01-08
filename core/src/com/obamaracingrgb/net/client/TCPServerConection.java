@@ -21,7 +21,7 @@ public class TCPServerConection extends Thread{
     UDPClientRecieveThread udpIn;
     UDPClientSenderThread udpOut;
     AtomicBoolean iniciar;
-    public AtomicBoolean racismo;
+    public AtomicBoolean open;
 
     public TCPServerConection(Socket conection, ObamaRGBGameClass game, Array<Player> players, Player actual, AtomicBoolean iniciar){
         this.conection = conection;
@@ -31,7 +31,7 @@ public class TCPServerConection extends Thread{
         this.modelName = actual.nodes.get(0).id;
         this.pos = -1;
         this.iniciar = iniciar;
-        this.racismo = new AtomicBoolean(true);
+        this.open = new AtomicBoolean(true);
         System.out.println("ModelName: "+ modelName);
     }
 
@@ -47,9 +47,9 @@ public class TCPServerConection extends Thread{
             pos = Integer.parseInt(in.readLine());
             System.out.println("Nuestra pos es "+pos);
 
-            racismo = new AtomicBoolean(true);
+            open = new AtomicBoolean(true);
 
-            udpIn = new UDPClientRecieveThread(players, pos, racismo);
+            udpIn = new UDPClientRecieveThread(players, pos, open);
             int lPort = udpIn.lPort;
 
             // Recibimos rPort
@@ -61,7 +61,7 @@ public class TCPServerConection extends Thread{
             out.flush();
             System.out.println("LPort: "+lPort);
 
-            udpOut = new UDPClientSenderThread(conection.getInetAddress(), rPort, actual, pos, racismo);
+            udpOut = new UDPClientSenderThread(conection.getInetAddress(), rPort, actual, pos, open);
             System.out.println("UDPOut");
 
             int contador = 0;

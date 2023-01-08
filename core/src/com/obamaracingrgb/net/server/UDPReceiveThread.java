@@ -16,11 +16,11 @@ public class UDPReceiveThread extends Thread{
     // TUS MUERTOS OSCAR ESTO SE DELETREA "RECEIVE" AL IGUAL QUE "DECEIVE"
     // POR ESO SE PRONUNCIA CON UNA I, YA SE QUE ES "DECEIVING" PERO LLEVO 20 MINS CON ESTO
     public int lPort;
-    private AtomicBoolean racismo;
+    private AtomicBoolean open;
 
-    public UDPReceiveThread(Array<Player> players, AtomicBoolean racismo){
+    public UDPReceiveThread(Array<Player> players, AtomicBoolean open){
         this.players = players;
-        this.racismo = racismo;
+        this.open = open;
         try {
             receiveSocket = new DatagramSocket();
             receiveSocket.setSoTimeout(1000);
@@ -37,7 +37,7 @@ public class UDPReceiveThread extends Thread{
         byte[] paketStreamix = new byte[100];
         DatagramPacket paketPhoenix = new DatagramPacket(paketStreamix,0, 100);    //lo siento mucho // yo no
         PlayerData currentPlayer;
-        while(racismo.get()){
+        while(open.get()){
             try {
                 System.out.println("UDP Intenta resivir");
                 receiveSocket.receive(paketPhoenix);
